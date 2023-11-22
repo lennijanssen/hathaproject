@@ -161,6 +161,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# Masaki's  files
-movenet.ipynb
