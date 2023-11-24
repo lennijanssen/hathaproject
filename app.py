@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 import av
 import cv2
-from project_logic.angle_comparer import angle_comparer, angle_function
+# from project_logic.angle_comparer import angle_comparer, angle_function
 import tensorflow as tf
 import numpy as np
 import tensorflow_hub as hub
