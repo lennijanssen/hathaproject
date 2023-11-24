@@ -10,6 +10,9 @@ raw_data/
 !test_landmark_all_raw.csv
 !train_landmark_all_raw.csv
 !val_landmark_all_raw.csv
+!test_landmark_xy_raw.csv
+!train_landmark_xy_raw.csv
+!val_landmark_xy_raw.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
