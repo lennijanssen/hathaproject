@@ -1,3 +1,10 @@
+import cv2
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def overlay(frame):
+    return frame
 import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow_docs.vis import embed
@@ -55,6 +62,10 @@ def overlay(frame, model, input_size):
 def live_feed():
     # Capture feed from webcam (zero)
     cap = cv2.VideoCapture(0)
+
+    while True:
+        ret, frame = cap.read()
+
     model_name = "movenet_lightning"
     input_size = 192
     module = hub.load("https://tfhub.dev/google/movenet/singlepose/lightning/4")
@@ -66,6 +77,10 @@ def live_feed():
             break
 
         # Apply overlay
+        aug_frame = overlay(frame=frame)
+
+        # Display the feed
+        cv2.imshow("Live Feed", aug_frame)
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Display the feed
