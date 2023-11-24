@@ -7,7 +7,9 @@ raw_data/
 *.JPG
 *.png
 *.PNG
-!landmark_all_raw.csv
+!test_landmark_all_raw.csv
+!train_landmark_all_raw.csv
+!val_landmark_all_raw.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
