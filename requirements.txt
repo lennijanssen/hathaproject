@@ -135,7 +135,7 @@ networkx==2.8.7
 nltk==3.7
 notebook==6.4.12
 notebook_shim==0.2.0
-numpy==1.23.4
+numpy<=1.23.4
 oauthlib==3.2.2
 opencv-python-headless==4.8.1.78
 opt-einsum==3.3.0
