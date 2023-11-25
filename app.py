@@ -34,8 +34,6 @@ def draw_key_points(frame, keypoints, conf_threshold):
 def callback(frame):
     image = frame.to_ndarray(format="bgr24")
 
-    image = image[0:300,:,:]
-
     img = tf.image.resize_with_pad(np.expand_dims(image, axis=0), 192, 192)
     input_image = tf.cast(img, dtype=tf.float32)
 
