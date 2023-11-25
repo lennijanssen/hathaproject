@@ -1,269 +1,124 @@
-# absl-py
-# alembic
-# altair
-# anyio
-# appnope
-# argon2-cffi
-# argon2-cffi-binding
-# astroid
-# asttokens
-# astunparse
-# attrs
-# autopep8
-# Babel
-# backcall
-# beautifulsoup4
-# bleach
-# blinker
-# branca
-# cachetools
-# certifi
-# cffi
-# charset-normalizer
-# click
-# cloudpickle
-# colorama
-# commonmark
-# cycler
-# Cython
-# dask
-# databricks-cli
-db-dtypes
-# deap
-# debugpy
-# decorator
-# defusedxml
-# dill
-docker
-# entrypoints
-# etils
-# executing
-# fastjsonschema2
-# filelock
-# flake8
-# Flask
-# flatbuffers
-# folium
-# fonttools
-# fsspec
-# gast
-# gensim
-# gitdb
-GitPython
-google-api-core
-google-auth
-google-auth-oauthlib
-google-cloud-bigquery
-google-cloud-bigquery-storage
-google-cloud-core
-google-cloud-storage
-google-crc32c
-google-pasta
-google-resumable-media
-google-trans-new
-googleapis-common-protos
-# grpcio==1.50.0
-# grpcio-status==1.48.2
-# gunicorn==21.2.0
-# h11==0.12.0
-# h5py==3.7.0
-# htmlmin==0.1.12
-# httpcore==0.15.0
-# httpx==0.23.0
-# huggingface-hub==0.16.4
-# idna==3.4
-# ImageHash==4.3.1
-# imageio==2.22.2
-# imbalanced-learn==0.9.1
-# imblearn==0.0
-# importlib-metadata==5.0.0
-# importlib-resources==5.10.0
-# iniconfig==1.1.1
-# ipdb==0.13.9
-ipykernel
-ipympl
-ipython
-ipython-genutils
-ipywidgets
-# isort==5.10.1
-# itsdangerous==2.1.2
-# jedi==0.18.1
-# Jinja2==3.1.2
-# joblib==1.1.1
-json5
-jsonschema
-jupyter-contrib-core
-jupyter-contrib-nbextensions
-jupyter-highlight-selected-word
-jupyter-latex-envs
-jupyter-nbextensions-configurator
-jupyter-resource-usage
-jupyter-server
-jupyter_client
-jupyter_core
-jupyterlab
-jupyterlab-pygments
-jupyterlab-widgets
-jupyterlab_server
-# kaggle==1.5.12
-keras
-Keras-Preprocessing
-# kiwisolver==1.4.4
-# lazy-object-proxy==1.7.1
-libclang
-# locket==1.0.0
-# lxml==4.9.1
-# Mako==1.2.4
-# Markdown==3.4.1
-# MarkupSafe==2.1.1
-matplotlib
-matplotlib-inline
-# mccabe==0.6.1
-# memoized-property==1.0.3
-# missingno==0.5.1
-# mistune==0.8.4
-# mlflow==2.7.1
-# mpmath==1.3.0
-# multimethod==1.8
-nbclassic
-nbclient
-nbconvert
-nbformat
-nbresult
-# nest-asyncio==1.5.6
-# networkx==2.8.7
-# nltk==3.7
-# notebook==6.4.12
-# notebook_shim==0.2.0
-# numpy<=1.23.4
-# oauthlib==3.2.2
-opencv-python
-opencv
-# opt-einsum==3.3.0
-# packaging==21.3
-# pandas==1.4.4
-# pandas-gbq==0.17.9
-# pandocfilters==1.5.0
-# parso==0.8.3
-# partd==1.3.0
-# patsy==0.5.3
-# pexpect==4.8.0
-# phik==0.12.2
-# pickleshare==0.7.5
-# Pillow==9.1.1
-# platformdirs==2.5.2
-# plotly==5.9.0
-# pluggy==1.0.0
-# pmdarima==2.0.1
-# prometheus-client==0.15.0
-# promise==2.3
-# prompt-toolkit==3.0.31
-# proto-plus==1.22.1
-# protobuf==3.19.6
-# psutil==5.9.3
-# psycopg2-binary==2.9.4
-# ptyprocess==0.7.0
-# pure-eval==0.2.2
-py
-pyarrow
-# pyasn1==0.4.8
-# pyasn1-modules==0.2.8
-# pycodestyle==2.8.0
-# pycparser==2.21
-# pydantic==1.9.2
-# pydata-google-auth==1.4.0
-# pydeck==0.8.0b4
-# pyflakes==2.4.0
-# pygeohash==1.2.0
-# Pygments==2.13.0
-# PyJWT==2.8.0
-# pylint==2.14.5
-# Pympler==1.0.1
-pyparsing==3.0.9
-pyrsistent==0.18.1
-pytesseract==0.3.10
-pytest==7.1.3
-pytest-asyncio==0.19.0
+absl-py==2.0.0
+aioice==0.9.0
+aiortc==1.5.0
+altair==5.1.2
+astor==0.8.1
+asttokens==2.4.1
+astunparse==1.6.3
+attrs==23.1.0
+av==10.0.0
+blinker==1.7.0
+cachetools==5.3.2
+certifi==2023.11.17
+cffi==1.16.0
+charset-normalizer==3.3.2
+click==8.1.7
+contourpy==1.2.0
+cryptography==41.0.5
+cycler==0.12.1
+decorator==5.1.1
+dnspython==2.4.2
+exceptiongroup==1.2.0
+executing==2.0.1
+fastjsonschema==2.19.0
+flatbuffers==23.5.26
+fonttools==4.45.1
+gast==0.5.4
+gitdb==4.0.11
+GitPython==3.1.40
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-crc32c==1.5.0
+google-pasta==0.2.0
+grpcio==1.59.3
+h5py==3.10.0
+idna==3.5
+ifaddr==0.2.0
+imageio==2.33.0
+importlib-metadata==6.8.0
+ipython==8.18.0
+jedi==0.19.1
+Jinja2==3.1.2
+joblib==1.3.2
+jsonschema==4.20.0
+jsonschema-specifications==2023.11.1
+jupyter_core==5.5.0
+keras==2.15.0
+kiwisolver==1.4.5
+libclang==16.0.6
+Markdown==3.5.1
+markdown-it-py==3.0.0
+MarkupSafe==2.1.3
+matplotlib==3.8.2
+matplotlib-inline==0.1.6
+mdurl==0.1.2
+mediapipe==0.10.8
+ml-dtypes==0.2.0
+nbformat==5.9.2
+numpy==1.26.2
+oauthlib==3.2.2
+opencv-contrib-python==4.8.1.78
+opencv-python==4.8.1.78
+opt-einsum==3.3.0
+packaging==23.2
+pandas==2.1.3
+parso==0.8.3
+pexpect==4.8.0
+Pillow==10.1.0
+platformdirs==4.0.0
+prompt-toolkit==3.0.41
+protobuf==3.20.3
+ptyprocess==0.7.0
+pure-eval==0.2.2
+pyarrow==14.0.1
+pyasn1==0.5.1
+pyasn1-modules==0.3.0
+pycparser==2.21
+pydeck==0.8.1b0
+pyee==11.1.0
+Pygments==2.17.2
+pylibsrtp==0.8.0
+pyOpenSSL==23.3.0
+pyparsing==3.1.1
 python-dateutil==2.8.2
-python-dotenv==0.20.0
-python-slugify==6.1.2
-# pytz==2022.1
-# pytz-deprecation-shim==0.1.0.post0
-# PyWavelets==1.4.1
-# PyYAML==6.0.1
-# pyzmq==24.0.1
-# querystring-parser==1.2.4
-regex==2022.9.13
-requests==2.28.1
+pytz==2023.3.post1
+PyYAML==6.0.1
+referencing==0.31.0
+requests==2.31.0
 requests-oauthlib==1.3.1
-# rfc3986==1.5.0
-# rich==12.6.0
-# rsa==4.9
-# sacremoses==0.0.53
-safetensors==0.3.3
-scikit-image==0.19.3
-scikit-learn==1.3.1
-scipy==1.10.0
-# seaborn==0.11.2
-# semver==2.13.0
-# Send2Trash==1.8.0
-# sentencepiece==0.1.99
-# setuptools-scm==6.4.2
-# six==1.16.0
-# smart-open==6.2.0
-# smmap==5.0.0
-# sniffio==1.3.0
-# soupsieve==2.3.2.post1
-# SQLAlchemy==2.0.21
-sqlparse
-stack-data
-statsmodels
-stopit
-streamlit
-streamlit-webrtc
-# sympy==1.12
-# tabulate==0.9.0
-# tangled-up-in-unicode==0.2.0
-# tenacity==8.1.0
-# tensorboard-data-server==0.6.1
-# tensorboard-plugin-wit==1.8.1
-tensorflow
-tensorflow-datasets
-tensorflow-docs
-tensorflow-estimator
-tensorflow-hub
-tensorflow-metadata
-# termcolor==2.0.1
-# terminado==0.16.0
-# text-unidecode==1.3
-# threadpoolctl==3.1.0
-# tifffile==2022.10.10
-# tinycss2==1.2.1
-# tokenizers==0.14.0
-# toml==0.10.2
-# tomli==2.0.1
-# tomlkit==0.11.5
-# toolz==0.12.0
-# torch==2.1.0
-# tornado==6.2
-# TPOT==0.11.7
-# tqdm==4.64.1
-# traitlets==5.5.0
-# transformers==4.34.0
-# typing_extensions==4.4.0
-# tzdata==2022.5
-# tzlocal==4.2
-update-checker
-# urllib3==1.26.12
-# validators==0.20.0
-# visions==0.7.5
-# wcwidth==0.2.5
-webencodings==0.5.1
-websocket-client==1.4.1
-# Werkzeug==3.0.0
-# widgetsnbextension==3.6.1
-# wrapt==1.14.1
-# xgboost==1.6.2
-# XlsxWriter==3.0.3
-yapf==0.32.0
-zipp==3.10.0
+rich==13.7.0
+rpds-py==0.13.1
+rsa==4.9
+scikit-learn==1.3.2
+scipy==1.11.4
+seaborn==0.13.0
+six==1.16.0
+smmap==5.0.1
+sounddevice==0.4.6
+stack-data==0.6.3
+streamlit==1.28.2
+streamlit-webrtc==0.47.1
+tenacity==8.2.3
+tensorboard==2.15.1
+tensorboard-data-server==0.7.2
+tensorflow==2.15.0
+tensorflow-docs==2023.5.24.56664
+tensorflow-estimator==2.15.0
+tensorflow-hub==0.15.0
+tensorflow-io-gcs-filesystem==0.34.0
+tensorflow-macos==2.15.0
+termcolor==2.3.0
+threadpoolctl==3.2.0
+toml==0.10.2
+toolz==0.12.0
+tornado==6.3.3
+traitlets==5.13.0
+typing_extensions==4.8.0
+tzdata==2023.3
+tzlocal==5.2
+urllib3==2.1.0
+validators==0.22.0
+wcwidth==0.2.12
+Werkzeug==3.0.1
+wrapt==1.14.1
+zipp==3.17.0
