@@ -55,6 +55,7 @@ mdurl==0.1.2
 mediapipe==0.10.8
 ml-dtypes==0.2.0
 nbformat==5.9.2
+nltk
 numpy==1.26.2
 oauthlib==3.2.2
 opencv-python-headless==4.8.1.78
@@ -79,6 +80,7 @@ Pygments==2.17.2
 pylibsrtp==0.8.0
 pyOpenSSL==23.3.0
 pyparsing==3.1.1
+pytesseract
 python-dateutil==2.8.2
 pytz==2023.3.post1
 PyYAML==6.0.1
@@ -106,6 +108,7 @@ tensorflow-estimator==2.15.0
 tensorflow-hub==0.15.0
 tensorflow-io-gcs-filesystem==0.34.0
 termcolor==2.3.0
+textblob
 threadpoolctl==3.2.0
 toml==0.10.2
 toolz==0.12.0
