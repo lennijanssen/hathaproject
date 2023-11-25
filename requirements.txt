@@ -96,7 +96,7 @@ six==1.16.0
 smmap==5.0.1
 sounddevice==0.4.6
 stack-data==0.6.3
-streamlit==1.28.2
+streamlit
 streamlit-webrtc==0.47.1
 tenacity==8.2.3
 tensorboard==2.15.1
