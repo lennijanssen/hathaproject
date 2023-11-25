@@ -57,7 +57,6 @@ ml-dtypes==0.2.0
 nbformat==5.9.2
 numpy==1.26.2
 oauthlib==3.2.2
-opencv-contrib-python==4.8.1.78
 opencv-python-headless==4.8.1.78
 opt-einsum==3.3.0
 packaging==23.2
@@ -96,16 +95,17 @@ six==1.16.0
 smmap==5.0.1
 sounddevice==0.4.6
 stack-data==0.6.3
-streamlit
+streamlit==1.28.2
 streamlit-webrtc==0.47.1
 tenacity==8.2.3
 tensorboard==2.15.1
 tensorboard-data-server==0.7.2
-tensorflow
+tensorflow==2.15.0
 tensorflow-docs==2023.5.24.56664
 tensorflow-estimator==2.15.0
 tensorflow-hub==0.15.0
 tensorflow-io-gcs-filesystem==0.34.0
+tensorflow-macos==2.15.0
 termcolor==2.3.0
 threadpoolctl==3.2.0
 toml==0.10.2
