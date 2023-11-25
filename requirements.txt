@@ -101,12 +101,12 @@ streamlit-webrtc==0.47.1
 tenacity==8.2.3
 tensorboard==2.15.1
 tensorboard-data-server==0.7.2
-tensorflow==2.15.0
+tensorflow
 tensorflow-docs==2023.5.24.56664
 tensorflow-estimator==2.15.0
 tensorflow-hub==0.15.0
 tensorflow-io-gcs-filesystem==0.34.0
-tensorflow-macos==2.15.0
+tensorflow-macos
 termcolor==2.3.0
 threadpoolctl==3.2.0
 toml==0.10.2
