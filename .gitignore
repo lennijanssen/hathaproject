@@ -4,6 +4,7 @@ raw_data/
 .DS_Store
 .python-version
 *.jpg
+*.jpeg
 *.JPG
 *.png
 *.PNG
