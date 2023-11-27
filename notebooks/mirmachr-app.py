@@ -75,4 +75,4 @@ if uploaded_file is not None:
         predicted_class_name = label_mapping[predicted_class[0]]
 
         # Display the predicted yoga pose
-        st.success(f"The predicted yoga pose is: {predicted_class_name}")
+        st.success(f"The predicted yoga pose is: {prediction}")
