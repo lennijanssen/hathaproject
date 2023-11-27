@@ -64,7 +64,6 @@ def angle_function(lm):
     return angle_dict, angle_list
 
 
-
 # This function compares two given landmark sets on their angles
 # Please use 2D-values for accurate results (x,y)
 
