@@ -39,13 +39,13 @@ st.write("Hello, world")
 
 
 def draw_key_points(frame, keypoints, conf_threshold):
-    y, x, c = frame.shape
+    y, x, _ = frame.shape
     shaped = np.squeeze(np.multiply(keypoints, [y,x,1]))
-
+    print(int(shaped[0][0]))
     for kp in shaped:
         ky, kx, kp_conf = kp
         if kp_conf > conf_threshold:
-            cv2.circle(frame,(int(kx), int(ky)), 15, (0, 255, 0), 5)
+            cv2.circle(frame,(int(kx), int(ky)), 1, (0, 255, 0), 5)
     return frame
 
 def get_pose(landmarks: list):
@@ -68,8 +68,10 @@ def callback(frame):
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
     image = frame.to_ndarray(format="bgr24")
-
+    print(image.shape)
+    # image = cv2.resize(image, (192,192))
     img = tf.image.resize_with_pad(np.expand_dims(image, axis=0), 192, 192)
+
     input_image = tf.cast(img, dtype=tf.float32)
 
     input_details = interpreter.get_input_details()
@@ -93,7 +95,7 @@ def callback(frame):
     text_position = (50, 50)
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1
-    font_color = (0, 0, 0)
+    font_color = (255, 255, 255)
     line_type = 2
     cv2.putText(image, str(target_pose), text_position, font, font_scale, font_color, line_type)
 
@@ -102,9 +104,10 @@ def callback(frame):
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff = angle_comparer(keypoints_with_scores[0][0], best)
 
-    cv2.putText(image, f"Score (avg): {average_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
+    cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    print(image.shape)
     return av.VideoFrame.from_ndarray(image, format="bgr24")
 
 
