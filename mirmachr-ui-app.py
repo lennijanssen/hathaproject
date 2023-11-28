@@ -154,19 +154,26 @@ def callback(frame):
     print(image.shape)
     return av.VideoFrame.from_ndarray(image, format="bgr24")
 
+#The 15-seconds countdown functions
+def main():
+    if st.button("Start Timer"):
+        start_timer()
+
+def start_timer():
+    ph = st.empty()
+    N = 15
+    while True:
+        for secs in range(N, 0, -1):
+            mm, ss = secs // 60, secs % 60
+            ph.metric("Timer", f"{mm:02d}:{ss:02d}")
+            time.sleep(1)
+        ph.empty()  # Clear the timer display
+
 best_downdog = Image.open('mika_poses/best_downdog.jpeg')
 best_goddess = Image.open('mika_poses/best_goddess.jpeg')
 best_highplank = Image.open('mika_poses/best_highplank.jpeg')
 best_hightree = Image.open('mika_poses/best_hightree.jpeg')
 best_warrior = Image.open('mika_poses/best_warrior.jpeg')
-
-#The 10-seconds countdown
-ph = st.empty()
-N = 15
-for secs in range(N,0,-1):
-    mm, ss = secs//60, secs%60
-    ph.metric("Timer", f"{mm:02d}:{ss:02d}")
-    time.sleep(1)
 
 # Define the layout for the video feed and pose images
 video_col, pose_col = st.columns([3, 1])  # Adjust the column width ratios as needed
@@ -180,6 +187,7 @@ with video_col:
             "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
         }
     )
+    main()
 
 # Scrollable pose images
 with pose_col:
