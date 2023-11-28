@@ -32,21 +32,52 @@ best_pose_map = {
     5: best_tree_up,
     6: best_warrior,
     7: best_warrior}
+EDGES = {
+    (0, 1): 'm',
+    (0, 2): 'c',
+    (1, 3): 'm',
+    (2, 4): 'c',
+    (0, 5): 'm',
+    (0, 6): 'c',
+    (5, 7): 'm',
+    (7, 9): 'm',
+    (6, 8): 'c',
+    (8, 10): 'c',
+    (5, 6): 'y',
+    (5, 11): 'm',
+    (6, 12): 'c',
+    (11, 12): 'y',
+    (11, 13): 'm',
+    (13, 15): 'm',
+    (12, 14): 'c',
+    (14, 16): 'c'
+}
 
 # Set up
 st.title("My first Streamlit app")
 st.write("Hello, world")
 
-
 def draw_key_points(frame, keypoints, conf_threshold):
-    y, x, _ = frame.shape
-    shaped = np.squeeze(np.multiply(keypoints, [y,x,1]))
+    max_dim = max(frame.shape)
+    shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
     print(int(shaped[0][0]))
     for kp in shaped:
         ky, kx, kp_conf = kp
         if kp_conf > conf_threshold:
-            cv2.circle(frame,(int(kx), int(ky)), 1, (0, 255, 0), 5)
+            cv2.circle(frame,(int(kx), int(ky)-80), 1, (0, 255, 0), 5)
     return frame
+
+def draw_connections(frame, keypoints, edges, confidence_threshold):
+    max_dim = max(frame.shape)
+    shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
+
+    for edge, color in edges.items():
+        p1, p2 = edge
+        y1, x1, c1 = shaped[p1]
+        y2, x2, c2 = shaped[p2]
+
+        if (c1 > confidence_threshold) & (c2 > confidence_threshold):
+            cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (255,0,0), 2)
 
 def get_pose(landmarks: list):
     """
@@ -68,8 +99,9 @@ def callback(frame):
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
     image = frame.to_ndarray(format="bgr24")
-    print(image.shape)
-    # image = cv2.resize(image, (192,192))
+    # min_dim = min(image.shape[:1])
+    # image = tf.image.resize_with_crop_or_pad(image, min_dim, min_dim)
+    # img = tf.image.resize(np.expand_dims(image, axis=0), 192, 192)
     img = tf.image.resize_with_pad(np.expand_dims(image, axis=0), 192, 192)
 
     input_image = tf.cast(img, dtype=tf.float32)
@@ -84,7 +116,8 @@ def callback(frame):
     output_details = interpreter.get_output_details()
     keypoints_with_scores = interpreter.get_tensor(output_details[0]["index"])
     # Draw the landmarks onto the image with threshold
-    image = draw_key_points(image, keypoints_with_scores, conf_threshold=0.7)
+    draw_key_points(image, keypoints_with_scores, conf_threshold=0.5)
+    draw_connections(image, keypoints_with_scores, EDGES, 0.5)
 
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
@@ -107,14 +140,12 @@ def callback(frame):
     cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
-    print(image.shape)
     return av.VideoFrame.from_ndarray(image, format="bgr24")
-
 
 webrtc_streamer(
     key="example",
     video_frame_callback=callback,
     rtc_configuration={  # Add this line
         "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    }
+    },
 )
