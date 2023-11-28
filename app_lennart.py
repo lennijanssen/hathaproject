@@ -34,6 +34,26 @@ best_pose_map = {
     5: best_tree_up,
     6: best_warrior,
     7: best_warrior}
+EDGES = {
+    (0, 1): 'm',
+    (0, 2): 'c',
+    (1, 3): 'm',
+    (2, 4): 'c',
+    # (0, 5): 'm',
+    # (0, 6): 'c',
+    (5, 7): 'm',
+    (7, 9): 'm',
+    (6, 8): 'c',
+    (8, 10): 'c',
+    (5, 6): 'y',
+    (5, 11): 'm',
+    (6, 12): 'c',
+    (11, 12): 'y',
+    (11, 13): 'm',
+    (13, 15): 'm',
+    (12, 14): 'c',
+    (14, 16): 'c'
+}
 
 # Set up
 # Include the Google Fonts link for "Playfair Display"
@@ -56,14 +76,26 @@ st.markdown("""This app uses a live feed from by your webcam to determine your y
 
 
 def draw_key_points(frame, keypoints, conf_threshold):
-    y, x, c = frame.shape
-    shaped = np.squeeze(np.multiply(keypoints, [y,x,1]))
-
+    max_dim = max(frame.shape)
+    shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
+    print(int(shaped[0][0]))
     for kp in shaped:
         ky, kx, kp_conf = kp
         if kp_conf > conf_threshold:
-            cv2.circle(frame,(int(kx), int(ky)), 15, (0, 255, 0), 5)
+            cv2.circle(frame,(int(kx), int(ky)-80), 1, (0, 255, 0), 5)
     return frame
+
+def draw_connections(frame, keypoints, edges, confidence_threshold):
+    max_dim = max(frame.shape)
+    shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
+
+    for edge, color in edges.items():
+        p1, p2 = edge
+        y1, x1, c1 = shaped[p1]
+        y2, x2, c2 = shaped[p2]
+
+        if (c1 > confidence_threshold) & (c2 > confidence_threshold):
+            cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (255,0,0), 2)
 
 def get_pose(landmarks: list):
     """
@@ -120,7 +152,7 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2):
 
 
 # Initialize global variables for the sliding window
-window_size = 40  # Number of frames to average over
+window_size = 30  # Number of frames to average over
 angle_diff_history = deque(maxlen=window_size)
 avg_percentage_diff_history = deque(maxlen=window_size)
 
@@ -145,7 +177,8 @@ def callback(frame):
     output_details = interpreter.get_output_details()
     keypoints_with_scores = interpreter.get_tensor(output_details[0]["index"])
     # Draw the landmarks onto the image with threshold
-    image = draw_key_points(image, keypoints_with_scores, conf_threshold=0.4)
+    draw_key_points(image, keypoints_with_scores, conf_threshold=0.4)
+    draw_connections(image, keypoints_with_scores, EDGES, 0.4)
 
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
@@ -153,6 +186,8 @@ def callback(frame):
     if np.max(pose_output) < 0.8:
         target_pose = "...still thinking..."
 
+
+    """ ======== 2.1. Text and Rectangle for Pose prediction ======== """
     # Coordinates where the text will appear
     text_position = (180, 34)
 
@@ -162,12 +197,9 @@ def callback(frame):
     font_color = (0, 0, 0)  # White color
     line_type = 2
 
+    # which text??
     text = target_pose
-
     text_bottom_left = text_position
-
-    # Put the text on the frame
-
 
     # Set the fixed-size rectangle dimensions
     box_width = 300
@@ -182,7 +214,6 @@ def callback(frame):
     # Draw the fixed-size rectangle on the image
     rectangle_color = (0, 255, 0)  # Green color for the rectangle
     rectangle_thickness = -1  # Thickness of the rectangle borders
-
 
     cv2.rectangle(image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
     cv2.putText(image, text, text_position, font, font_scale, font_color, line_type)
