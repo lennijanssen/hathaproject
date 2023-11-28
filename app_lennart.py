@@ -105,7 +105,7 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2):
     for i, angle_diff in enumerate(angle_diffs):
         # Normalize the angle difference to a value between 0 and 1
         normalized_diff = angle_diff / max_value
-        bar_length = int(normalized_diff * 150)  # Scale the bar length to the desired value
+        bar_length = int(normalized_diff * 100)  # Scale the bar length to the desired value
 
         # Calculate the top-left and bottom-right corners of the bar
         top_left_corner = (start_x, start_y + (bar_height + bar_spacing) * i)
