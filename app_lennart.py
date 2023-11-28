@@ -315,7 +315,7 @@ with video_col:
         }
     )
 
-(currently not) Scrollable pose images
+# (currently not) Scrollable pose images
 with pose_col:
     # Use a container and set the overflow property to allow scrolling
     with st.container():
