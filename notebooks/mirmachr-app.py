@@ -22,6 +22,7 @@ st.title('Dense Neural Network (NN) Exploration')
 # Header and Sub-header
 st.header('Yoga Pose Recognition')
 st.subheader('Upload an image to predict the yoga pose')
+st.write('')
 
 # Image uploader
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
