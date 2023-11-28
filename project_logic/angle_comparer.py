@@ -1,5 +1,6 @@
 from operator import truediv
 import numpy as np
+import math as mt
 
 
 # Function for getting angles for single image input,
@@ -9,14 +10,14 @@ import numpy as np
 def angle_function(lm):
 
     landmark_dict = {
-    'landmarks_left_elbow' : (lm[5], lm[7], lm[9]),
-    'landmarks_right_elbow' : (lm[6], lm[8], lm[10]),
-    'landmarks_left_shoulder' : (lm[7], lm[5], lm[11]),
-    'landmarks_right_shoulder' : (lm[8], lm[6], lm[12]),
-    'landmarks_hip_left' : (lm[5], lm[11], lm[13]),
-    'landmarks_hip_right' : (lm[6], lm[12], lm[14]),
-    'landmarks_left_knee' : (lm[11], lm[13], lm[15]),
-    'landmarks_right_knee' : (lm[12], lm[14], lm[16])
+    'landmarks_left_elbow' : (lm[9], lm[7], lm[5]),
+    'landmarks_right_elbow' : (lm[10], lm[8], lm[6]),
+    'landmarks_left_shoulder' : (lm[11], lm[5], lm[7]),
+    'landmarks_right_shoulder' : (lm[12], lm[6], lm[8]),
+    'landmarks_hip_left' : (lm[13], lm[11], lm[5]),
+    'landmarks_hip_right' : (lm[14], lm[12], lm[6]),
+    'landmarks_left_knee' : (lm[15], lm[13], lm[11]),
+    'landmarks_right_knee' : (lm[16], lm[14], lm[12])
         }
 
     def angle_calculator(landmarks):
@@ -84,10 +85,10 @@ def angle_comparer(test, best):
     test_angle_percentage = list(map(truediv, test_pose_angles, best_pose_angles))
 
     # find absolute difference by percentage
-    test_angle_percentage_diff = [round(abs(x-1),2) for x in test_angle_percentage]
-
+    test_angle_percentage_diff = [(abs(round((x-1),2))**2) for x in test_angle_percentage]
+    print(test_angle_percentage_diff)
     # find average percentage difference
-    average_percentage_diff = round(sum(test_angle_percentage_diff)/len(test_angle_percentage_diff),2)
-
+    average_percentage_diff = abs(round(mt.sqrt(sum(test_angle_percentage_diff))/mt.sqrt(len(test_angle_percentage_diff)),2))
+    print(average_percentage_diff)
 
     return test_angle_percentage_diff, average_percentage_diff
