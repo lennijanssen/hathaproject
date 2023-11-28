@@ -5,11 +5,14 @@ import cv2
 from project_logic.angle_comparer import angle_comparer
 import tensorflow as tf
 import numpy as np
-import tensorflow_hub as hub
+# import tensorflow_hub as hub
 import joblib
 from project_logic.best_poses import *
 import time
+import queue
 
+# ======================== Setup and Model Loading =========================
+# Set up
 interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
 interpreter.allocate_tensors()
 model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
@@ -53,10 +56,13 @@ EDGES = {
     (14, 16): 'c'
 }
 
-# Set up
+result_queue: "queue.Queue[List[Detection]]" = queue.Queue()
+
+# Head Text
 st.title("My first Streamlit app")
 st.write("Hello, world")
 
+# ============================= Helper Methods =============================
 def draw_key_points(frame, keypoints, conf_threshold):
     max_dim = max(frame.shape)
     shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
@@ -95,13 +101,11 @@ def get_pose(landmarks: list):
     prediction = model.predict(scaled_landmarks)
     return prediction
 
+# ======================== Video Feed Overlay Logic ========================
 def callback(frame):
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
     image = frame.to_ndarray(format="bgr24")
-    # min_dim = min(image.shape[:1])
-    # image = tf.image.resize_with_crop_or_pad(image, min_dim, min_dim)
-    # img = tf.image.resize(np.expand_dims(image, axis=0), 192, 192)
     img = tf.image.resize_with_pad(np.expand_dims(image, axis=0), 192, 192)
 
     input_image = tf.cast(img, dtype=tf.float32)
@@ -124,6 +128,7 @@ def callback(frame):
     target_pose = label_mapping[np.argmax(pose_output)]
     if np.max(pose_output) < 0.8:
         target_pose = "...still thinking..."
+
     # Settings for text to show predicted pose
     text_position = (50, 50)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -131,6 +136,7 @@ def callback(frame):
     font_color = (255, 255, 255)
     line_type = 2
     cv2.putText(image, str(target_pose), text_position, font, font_scale, font_color, line_type)
+    result_queue.put(keypoints_with_scores[0][0])
 
     """ ======== 3. Scoring of Pose ========"""
 
@@ -142,6 +148,7 @@ def callback(frame):
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
     return av.VideoFrame.from_ndarray(image, format="bgr24")
 
+
 webrtc_streamer(
     key="example",
     video_frame_callback=callback,
@@ -149,3 +156,8 @@ webrtc_streamer(
         "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
     },
 )
+
+labels_placeholder = st.empty()
+while True:
+    result = result_queue.get()
+    labels_placeholder.write(result)
