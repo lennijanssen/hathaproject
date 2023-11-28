@@ -85,10 +85,12 @@ def angle_comparer(test, best):
     test_angle_percentage = list(map(truediv, test_pose_angles, best_pose_angles))
 
     # find absolute difference by percentage
+    test_angle_percentage_diff_unscaled = [(abs(round((x-1),2))) for x in test_angle_percentage]
     test_angle_percentage_diff = [(abs(round((x-1),2))**2) for x in test_angle_percentage]
+
     print(test_angle_percentage_diff)
     # find average percentage difference
-    average_percentage_diff = abs(round(mt.sqrt(sum(test_angle_percentage_diff))/mt.sqrt(len(test_angle_percentage_diff)),2))
+    average_percentage_diff = abs(round(sum(test_angle_percentage_diff_unscaled)/len(test_angle_percentage_diff_unscaled),2))
     print(average_percentage_diff)
 
     return test_angle_percentage_diff, average_percentage_diff
