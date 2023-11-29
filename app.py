@@ -158,6 +158,9 @@ webrtc_streamer(
 )
 
 labels_placeholder = st.empty()
+timecount =  st.empty()
 while True:
+    s_time = time.time()
     result = result_queue.get()
     labels_placeholder.write(result)
+    timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
