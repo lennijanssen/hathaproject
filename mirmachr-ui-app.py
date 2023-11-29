@@ -227,7 +227,7 @@ if 'result' not in st.session_state:
 def update_state(result):
     st.session_state['result'] = result
     st.experimental_rerun()  # Use Streamlit's experimental rerun feature
-
+    
 st.markdown("### Pose Analysis (Placeholder)")
 col1, col2 = st.columns(2)
 col1.metric("Pose Name", "Warrior")
