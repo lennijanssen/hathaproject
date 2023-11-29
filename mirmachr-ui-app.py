@@ -10,6 +10,7 @@ import joblib
 from project_logic.best_poses import *
 import time
 from PIL import Image
+import queue
 
 #Make page wide (remove default wasted whitespace)
 st.set_page_config(layout="wide")
@@ -59,6 +60,7 @@ with col3:
     st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
     st.markdown("User receives instant feedback on the pose")
 
+# Set up
 interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
 interpreter.allocate_tensors()
 model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
@@ -81,6 +83,28 @@ best_pose_map = {
     5: best_tree_up,
     6: best_warrior,
     7: best_warrior}
+EDGES = {
+    (0, 1): 'm',
+    (0, 2): 'c',
+    (1, 3): 'm',
+    (2, 4): 'c',
+    (0, 5): 'm',
+    (0, 6): 'c',
+    (5, 7): 'm',
+    (7, 9): 'm',
+    (6, 8): 'c',
+    (8, 10): 'c',
+    (5, 6): 'y',
+    (5, 11): 'm',
+    (6, 12): 'c',
+    (11, 12): 'y',
+    (11, 13): 'm',
+    (13, 15): 'm',
+    (12, 14): 'c',
+    (14, 16): 'c'
+}
+
+result_queue: "queue.Queue[List[Detection]]" = queue.Queue()
 
 def draw_key_points(frame, keypoints, conf_threshold):
     y, x, _ = frame.shape
