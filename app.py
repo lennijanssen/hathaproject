@@ -55,6 +55,17 @@ EDGES = {
     (12, 14): 'c',
     (14, 16): 'c'
 }
+landmark_dict = {
+    'landmarks_left_elbow': (9, 7, 5),
+    'landmarks_right_elbow': (10, 8, 6),
+    'landmarks_left_shoulder': (11, 5, 7),
+    'landmarks_right_shoulder': (12, 6, 8),
+    'landmarks_hip_left': (13, 11, 5),
+    'landmarks_hip_right': (14, 12, 6),
+    'landmarks_left_knee': (15, 13, 11),
+    'landmarks_right_knee': (16, 14, 12)}
+lm_list = list(landmark_dict.keys())
+lm_points = list(landmark_dict.values())
 
 result_queue: "queue.Queue[List[Detection]]" = queue.Queue()
 
@@ -70,7 +81,7 @@ def draw_key_points(frame, keypoints, conf_threshold):
     for kp in shaped:
         ky, kx, kp_conf = kp
         if kp_conf > conf_threshold:
-            cv2.circle(frame,(int(kx), int(ky)-80), 1, (0, 255, 0), 5)
+            cv2.circle(frame,(int(kx), int(ky)-80), 5, (0, 255, 0), 5)
     return frame
 
 def draw_connections(frame, keypoints, edges, confidence_threshold):
@@ -84,6 +95,7 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
 
         if (c1 > confidence_threshold) & (c2 > confidence_threshold):
             cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (255,0,0), 2)
+
 
 def get_pose(landmarks: list):
     """
@@ -119,9 +131,6 @@ def callback(frame):
     # Get the output details and retrieve the keypoints with scores
     output_details = interpreter.get_output_details()
     keypoints_with_scores = interpreter.get_tensor(output_details[0]["index"])
-    # Draw the landmarks onto the image with threshold
-    draw_key_points(image, keypoints_with_scores, conf_threshold=0.5)
-    draw_connections(image, keypoints_with_scores, EDGES, 0.5)
 
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
@@ -136,18 +145,27 @@ def callback(frame):
     font_color = (255, 255, 255)
     line_type = 2
     cv2.putText(image, str(target_pose), text_position, font, font_scale, font_color, line_type)
-    result_queue.put(keypoints_with_scores[0][0])
 
     """ ======== 3. Scoring of Pose ========"""
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff = angle_comparer(keypoints_with_scores[0][0], best)
+    index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
+    result_queue.put(lm_list[index_of_worst])
 
     cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
-    return av.VideoFrame.from_ndarray(image, format="bgr24")
 
+    worst_kps = []
+    for i in lm_points[index_of_worst]:
+        worst_kps.append((np.squeeze(keypoints_with_scores)[i]).tolist())
+
+    result_queue.put(test_angle_percentage_diff)
+    # Draw the landmarks onto the image with threshold
+    draw_key_points(image, worst_kps, conf_threshold=0.2)
+    # draw_connections(image, keypoints_with_scores, EDGES, 0.5)
+    return av.VideoFrame.from_ndarray(image, format="bgr24")
 
 webrtc_streamer(
     key="example",
@@ -155,12 +173,17 @@ webrtc_streamer(
     rtc_configuration={  # Add this line
         "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
     },
+    media_stream_constraints={"video": True, "audio": False}
 )
 
+# ======================== Info Under Video Feed ========================
 labels_placeholder = st.empty()
+angle_perc = st.empty()
 timecount =  st.empty()
 while True:
     s_time = time.time()
-    result = result_queue.get()
-    labels_placeholder.write(result)
+    worst = result_queue.get()
+    result = max(result_queue.get())
+    labels_placeholder.write(f"results: {result}")
+    angle_perc.write(f"FIX YOUR {worst}")
     timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
