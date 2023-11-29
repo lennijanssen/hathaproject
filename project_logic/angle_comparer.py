@@ -86,11 +86,14 @@ def angle_comparer(test, best):
 
     # find absolute difference by percentage
     test_angle_percentage_diff_unscaled = [(abs(round((x-1),2))) for x in test_angle_percentage]
-    test_angle_percentage_diff = [(abs(round((x-1),2))**2) for x in test_angle_percentage]
+    test_angle_percentage_diff = [abs(round((x-1),2)) for x in test_angle_percentage]
+    score_angles_unscaled = [(1 - abs(round((x-1),2))) for x in test_angle_percentage]
+    score_angles = [(1 - abs(round((x-1),2)))*5 for x in test_angle_percentage]
 
     print(test_angle_percentage_diff)
     # find average percentage difference
     average_percentage_diff = abs(round(sum(test_angle_percentage_diff_unscaled)/len(test_angle_percentage_diff_unscaled),2))
+    average_score = 1-abs(round(sum(test_angle_percentage_diff_unscaled)/len(test_angle_percentage_diff_unscaled),2))
     print(average_percentage_diff)
 
-    return test_angle_percentage_diff, average_percentage_diff
+    return test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score
