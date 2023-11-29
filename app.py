@@ -96,7 +96,6 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
         if (c1 > confidence_threshold) & (c2 > confidence_threshold):
             cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (255,0,0), 2)
 
-
 def get_pose(landmarks: list):
     """
     This function takes a (3,17) landmarks array and returns the softmax output
@@ -151,7 +150,8 @@ def callback(frame):
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff = angle_comparer(keypoints_with_scores[0][0], best)
     index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
-    result_queue.put(lm_list[index_of_worst])
+    worst_points = lm_points[index_of_worst]
+    result_queue.put(worst_points)
 
     cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
@@ -161,10 +161,16 @@ def callback(frame):
     for i in lm_points[index_of_worst]:
         worst_kps.append((np.squeeze(keypoints_with_scores)[i]).tolist())
 
-    result_queue.put(test_angle_percentage_diff)
+    worst_edges = {
+        (worst_points[0], worst_points[1]): None,
+        (worst_points[1], worst_points[2]): None,
+    }
+
+    result_queue.put(worst_edges)
+
     # Draw the landmarks onto the image with threshold
     draw_key_points(image, worst_kps, conf_threshold=0.2)
-    # draw_connections(image, keypoints_with_scores, EDGES, 0.5)
+    draw_connections(image, keypoints_with_scores, worst_edges, 0.5)
     return av.VideoFrame.from_ndarray(image, format="bgr24")
 
 webrtc_streamer(
@@ -183,7 +189,7 @@ timecount =  st.empty()
 while True:
     s_time = time.time()
     worst = result_queue.get()
-    result = max(result_queue.get())
+    result = result_queue.get()
     labels_placeholder.write(f"results: {result}")
     angle_perc.write(f"FIX YOUR {worst}")
     timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
