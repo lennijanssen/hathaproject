@@ -74,7 +74,6 @@ model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
 scaler = joblib.load('notebooks/scaler.pkl')
 
 # Define necessary dictionaries
-
 label_mapping = {
     0: 'Downdog',
     1: 'Goddess',
@@ -332,14 +331,11 @@ def callback(frame):
 
 # ==================== Actual UI output =====================
 
-# Use placeholders for loading images
-with st.spinner('Loading poses...'):
-    best_downdog = Image.open('mika_poses/best_downdog.jpeg')
-    best_highplank = Image.open('mika_poses/best_highplank.jpeg')
-    best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-    best_goddess = Image.open('mika_poses/best_goddess.jpeg')
-    best_warrior = Image.open('mika_poses/best_warrior.jpeg')
-    time.sleep(1)  # Simulate loading time
+best_downdog = Image.open('mika_poses/best_downdog.jpeg')
+best_highplank = Image.open('mika_poses/best_highplank.jpeg')
+best_hightree = Image.open('mika_poses/best_hightree.jpeg')
+best_goddess = Image.open('mika_poses/best_goddess.jpeg')
+best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
 # Show the poses with the loading spinner
 pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
@@ -390,6 +386,25 @@ with st.spinner('Analyzing pose...'):
     col2.metric("Pose", sample_pose)
     col3.metric("Score", sample_score)
     col4.metric("You need to fix", sample_body_part)
+
+# Learn More Section
+with st.expander("""More about the yoga poses and the benefits 🧘"""):
+    st.write("""
+        - **Downward-Facing Dog**:
+        A quintessential yoga pose, Downward-Facing Dog provides a rejuvenating stretch for the entire body. It's known for its ability to calm the mind, lengthen the spine, strengthen the upper body, and stimulate blood flow to the brain. This pose is often used as a resting posture in between more challenging poses.
+
+        - **Plank**:
+        Foundational pose that strengthens the arms, wrists, and spine while toning the abdomen. It's a full-body workout that requires energy, engagement, and stability, and it's an essential component for building core strength and resilience.
+
+        - **Tree**:
+        Strengthens the legs, opens the hips, and cultivates concentration and clarity of mind. By mimicking the steady stance of a tree, practitioners learn to root themselves firmly to the ground, promoting a sense of grounding and balance.
+
+        - **Goddess**:
+        Dynamic standing posture that ignites the fires of the inner thighs, hips, and chest. As a pose that encourages powerful energy flow, it's excellent for improving circulation and energizing the body. It also fosters a sense of inner strength and empowerment.
+
+        - **Warrior**:
+        Helps build focus, power, and stability. This powerful stretch for your thighs and shoulders increases stamina as well.
+    """)
 
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
