@@ -80,13 +80,14 @@ def angle_comparer(test, best):
 
     # change values to absolute values
     angle_difference = list(map(abs, angle_substraction))
+    test_angle_percentage_diff = [x/180 for x in angle_difference]
 
     # find percentages for each pose
     test_angle_percentage = list(map(truediv, test_pose_angles, best_pose_angles))
 
     # find absolute difference by percentage
     test_angle_percentage_diff_unscaled = [(abs(round((x-1),2))) for x in test_angle_percentage]
-    test_angle_percentage_diff = [abs(round((x-1),2)) for x in test_angle_percentage]
+    # test_angle_percentage_diff = [abs(round((x-1),2)) for x in test_angle_percentage]
     score_angles_unscaled = [(1 - abs(round((x-1),2))) for x in test_angle_percentage]
     score_angles = [(1 - abs(round((x-1),2)))*5 for x in test_angle_percentage]
 
