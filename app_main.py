@@ -98,8 +98,8 @@ EDGES = {
     (0, 2): 'c',
     (1, 3): 'm',
     (2, 4): 'c',
-    # (0, 5): 'm',
-    # (0, 6): 'c',
+    (0, 5): 'm',
+    (0, 6): 'c',
     (5, 7): 'm',
     (7, 9): 'm',
     (6, 8): 'c',
@@ -220,16 +220,17 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2, m
 
 
 # Initialize global variables for the sliding window
-window_size = 2  # Number of frames to average over
+window_size = 30  # Number of frames to average over
 score_angles_history = deque(maxlen=window_size)
-average_score_history = deque(maxlen=window_size)
 angle_diff_history = deque(maxlen=window_size)
 avg_percentage_diff_history = deque(maxlen=window_size)
+worst_name_history = deque(maxlen=window_size)
+average_score_history = deque(maxlen=window_size)
 
 
 # Defining the callback to create video and overlay
 def callback(frame):
-    global angle_diff_history, avg_percentage_diff_history, score_angles_history, average_score_history
+    global worst_name_history, angle_diff_history, avg_percentage_diff_history, score_angles_history, average_score_history
 
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
@@ -289,16 +290,18 @@ def callback(frame):
     cv2.rectangle(image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
     cv2.putText(image, text, text_position, font, font_scale, font_color, line_type)
 
-    """ ======== 3. Scoring of Pose ========"""
+    """ ======== 3. Scoring of Pose ====+===="""
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
+    average_score = sum(test_angle_percentage_diff)/len(test_angle_percentage_diff)
     index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
     worst_points = lm_points[index_of_worst]
     result_queue.put(lm_list[index_of_worst])
+
 
     # cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
@@ -314,7 +317,10 @@ def callback(frame):
     }
 
     result_queue.put(worst_edges)
+    # average_score_history.append(1-average_score)
+    worst_name_history.append(lm_list[index_of_worst])
 
+    # sliding_avg_score = np.mean(average_score_history, axis=0)
 
     # Draw the landmarks onto the image with threshold
     draw_key_points(image, worst_kps, conf_threshold=0.2)
@@ -332,35 +338,36 @@ def callback(frame):
 
 # ==================== Actual UI output =====================
 
+# Use placeholders for loading images
+
 best_downdog = Image.open('mika_poses/best_downdog.jpeg')
 best_highplank = Image.open('mika_poses/best_highplank.jpeg')
 best_hightree = Image.open('mika_poses/best_hightree.jpeg')
 best_goddess = Image.open('mika_poses/best_goddess.jpeg')
 best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
-# Show perfect poses
-
+# Show the poses with the loading spinner
 pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
 with pose_col_1:
     with st.container():
-        st.image(best_downdog, use_column_width=True)
+        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
 
 with pose_col_2:
     with st.container():
-        st.image(best_highplank, use_column_width=True)
+        st.image(best_highplank, use_column_width=True, caption='High Plank')
 
 with pose_col_3:
     with st.container():
-        st.image(best_hightree, use_column_width=True)
+        st.image(best_hightree, use_column_width=True, caption='High Tree')
 
 with pose_col_4:
     with st.container():
-        st.image(best_goddess, use_column_width=True)
+        st.image(best_goddess, use_column_width=True, caption='Goddess')
 
 with pose_col_5:
     with st.container():
-        st.image(best_warrior, use_column_width=True)
+        st.image(best_warrior, use_column_width=True, caption='Warrior')
 
 
 webrtc_streamer(
@@ -378,14 +385,26 @@ labels_placeholder = st.empty()
 angle_perc = st.empty()
 timecount =  st.empty()
 
+col1, col2, col3 = st.columns(3)
+column1 = col1.empty()
+column2 = col2.empty()
+column3 = col3.empty()
+
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
 
 
 while True:
     s_time = time.time()
-    worst = result_queue.get()
+    # print(result_queue.get())
+    # print(max(result_queue.get()))
+    worst = joint_dict[result_queue.get()]
     result = max(result_queue.get())
-    labels_placeholder.write(f"results: {result}")
-    angle_perc.write(f"FIX YOUR {worst}")
-    timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    # labels_placeholder.write(f"results: {result}")
+    # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+
+    # column1.write(f"Score: {sliding_avg_score}")
+    column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
