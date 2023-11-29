@@ -11,8 +11,12 @@ from project_logic.best_poses import *
 import time
 from collections import deque
 from PIL import Image
+import queue
 
-#Make page wide (remove default wasted whitespace)
+
+# ======================== Setup and Model Loading =========================
+
+# Make page wide (remove default wasted whitespace)
 print('setting the page config')
 st.set_page_config(layout="wide")
 
@@ -62,10 +66,16 @@ with col3:
     st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
     st.markdown("User receives instant feedback on the pose")
 
+
+# Load Model and Scaler
 interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
 interpreter.allocate_tensors()
 model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
 scaler = joblib.load('notebooks/scaler.pkl')
+
+
+# Define necessary dictionaries
+
 label_mapping = {
     0: 'Downdog',
     1: 'Goddess',
@@ -104,7 +114,34 @@ EDGES = {
     (12, 14): 'c',
     (14, 16): 'c'
 }
+landmark_dict = {
+    'landmarks_left_elbow': (9, 7, 5),
+    'landmarks_right_elbow': (10, 8, 6),
+    'landmarks_left_shoulder': (11, 5, 7),
+    'landmarks_right_shoulder': (12, 6, 8),
+    'landmarks_hip_left': (13, 11, 5),
+    'landmarks_hip_right': (14, 12, 6),
+    'landmarks_left_knee': (15, 13, 11),
+    'landmarks_right_knee': (16, 14, 12)}
+lm_list = list(landmark_dict.keys())
+lm_points = list(landmark_dict.values())
+joint_dict = {'landmarks_left_elbow': 'left elbow',
+              'landmarks_right_elbow': 'left elbow',
+              'landmarks_left_shoulder': 'left shoulder',
+              'landmarks_right_shoulder': 'right shoulder',
+              'landmarks_hip_left': 'left hip',
+              'landmarks_hip_right': 'hip right',
+              'landmarks_left_knee': 'left knee',
+              'landmarks_right_knee': 'right knee'
+              }
 
+
+# Xx
+result_queue: "queue.Queue[List[Detection]]" = queue.Queue()
+
+# ==================== Functions definition and Variables =====================
+
+# Defining functions for the
 def draw_key_points(frame, keypoints, conf_threshold):
     max_dim = max(frame.shape)
     shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
@@ -183,13 +220,15 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2, m
         # cv2.putText(frame, f"{angle_diff:.1f}", (start_x + bar_length + 5, start_y + bar_height * 0.7 + (bar_height + bar_spacing) * i), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
 
-
 # Initialize global variables for the sliding window
 window_size = 2  # Number of frames to average over
 score_angles_history = deque(maxlen=window_size)
 average_score_history = deque(maxlen=window_size)
+angle_diff_history = deque(maxlen=window_size)
+avg_percentage_diff_history = deque(maxlen=window_size)
 
 
+# Defining the
 def callback(frame):
     global angle_diff_history, avg_percentage_diff_history
 
@@ -212,8 +251,8 @@ def callback(frame):
     print(keypoints_with_scores[0][0][:, :2])
     print(type(keypoints_with_scores))
     # Draw the landmarks onto the image with threshold
-    draw_key_points(image, keypoints_with_scores, conf_threshold=0.4)
-    draw_connections(image, keypoints_with_scores, EDGES, 0.4)
+    # draw_key_points(image, keypoints_with_scores, conf_threshold=0.4)
+    # draw_connections(image, keypoints_with_scores, EDGES, 0.4)
 
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
@@ -258,33 +297,64 @@ def callback(frame):
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
 
-    score_angles_history.append(score_angles)
-    average_score_history.append(average_score)
+    # score_angles_history.append(score_angles)
+    # average_score_history.append(average_score)
 
-    # print (angle_diff_history)
-    # print (avg_percentage_diff_history)
-    # Calculate the sliding window averages
-    sliding_score_angles_history = np.mean(score_angles_history, axis=0)
-    sliding_average_score_history = np.mean(average_score_history)
-
-
-    sliding_avg_diff = np.mean(score_angles_history, axis=0)
-
-    # Draw the bars onto the frame
-    draw_bars(image, sliding_score_angles_history)
+    # # print (angle_diff_history)
+    # # print (avg_percentage_diff_history)
+    # # Calculate the sliding window averages
+    # sliding_score_angles_history = np.mean(score_angles_history, axis=0)
+    # sliding_average_score_history = np.mean(average_score_history)
 
 
-    cv2.putText(image, f"Score: {round(sliding_average_score_history,2)}", (210, 80), font, font_scale, font_color, line_type)
+    # sliding_avg_diff = np.mean(score_angles_history, axis=0)
 
-    cv2.putText(image, f"Elbow L", (0, 120), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Elbow R", (0, 150), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Shoulder L", (0, 180), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Shoulder R", (0, 210), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Hip L", (0, 240), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Hip R", (0, 270), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Knee L", (0, 300), font, font_scale, font_color, line_type)
-    cv2.putText(image, f"Knee R", (0, 330), font, font_scale, font_color, line_type)
+    # # Draw the bars onto the frame
+    # draw_bars(image, sliding_score_angles_history)
 
+
+    # cv2.putText(image, f"Score: {round(sliding_average_score_history,2)}", (210, 80), font, font_scale, font_color, line_type)
+
+    # cv2.putText(image, f"Elbow L", (0, 120), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Elbow R", (0, 150), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Shoulder L", (0, 180), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Shoulder R", (0, 210), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Hip L", (0, 240), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Hip R", (0, 270), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Knee L", (0, 300), font, font_scale, font_color, line_type)
+    # cv2.putText(image, f"Knee R", (0, 330), font, font_scale, font_color, line_type)
+
+
+    best = np.array(best_pose_map[np.argmax(pose_output)])
+    test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
+    index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
+    worst_points = lm_points[index_of_worst]
+    result_queue.put(lm_list[index_of_worst])
+
+    # cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
+
+    print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+    worst_kps = []
+    for i in lm_points[index_of_worst]:
+        worst_kps.append((np.squeeze(keypoints_with_scores)[i]).tolist())
+
+    worst_edges = {
+    (worst_points[0], worst_points[1]): None,
+    (worst_points[1], worst_points[2]): None,
+    }
+
+    result_queue.put(worst_edges)
+
+
+    # Draw the landmarks onto the image with threshold
+    draw_key_points(image, worst_kps, conf_threshold=0.2)
+    draw_connections(image, keypoints_with_scores, worst_edges, 0.5)
+    mirrored_image = cv2.flip(image, 1)
+    cv2.rectangle(mirrored_image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
+    cv2.putText(mirrored_image, text, text_position, font, font_scale, font_color, line_type)
+
+    return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
     # cv2.putText(image, f"Elbow L: {round(1-sliding_avg_diff[0],1)}", (0, 120), font, font_scale, font_color, line_type)
     # cv2.putText(image, f"Elbow R: {round(1-sliding_avg_diff[1],1)}", (0, 150), font, font_scale, font_color, line_type)
@@ -332,7 +402,10 @@ with video_col:
     )
     # main()
 
-# (currently not) Scrollable pose images
+labels_placeholder = st.empty()
+angle_perc = st.empty()
+timecount =  st.empty()
+
 with pose_col:
     # Use a container and set the overflow property to allow scrolling
     with st.container():
@@ -352,6 +425,16 @@ with pose_col:
         </style>
         """, unsafe_allow_html=True)
 
-
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
+
+
+while True:
+    s_time = time.time()
+    worst = result_queue.get()
+    result = max(result_queue.get())
+    labels_placeholder.write(f"results: {result}")
+    angle_perc.write(f"FIX YOUR {worst}")
+    timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+# (currently not) Scrollable pose images
