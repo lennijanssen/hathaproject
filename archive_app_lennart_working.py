@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, RTCConfiguration, WebRtcMode
+from streamlit_webrtc import webrtc_streamer
 import av
 import cv2
 from project_logic.angle_comparer import angle_comparer
@@ -72,6 +72,7 @@ interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
 interpreter.allocate_tensors()
 model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
 scaler = joblib.load('notebooks/scaler.pkl')
+
 
 # Define necessary dictionaries
 
@@ -229,7 +230,7 @@ avg_percentage_diff_history = deque(maxlen=window_size)
 
 # Defining the callback to create video and overlay
 def callback(frame):
-    global angle_diff_history, avg_percentage_diff_history, score_angles_history, average_score_history
+    global angle_diff_history, avg_percentage_diff_history
 
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
@@ -247,9 +248,11 @@ def callback(frame):
     # Get the output details and retrieve the keypoints with scores
     output_details = interpreter.get_output_details()
     keypoints_with_scores = interpreter.get_tensor(output_details[0]["index"])
-    # print(keypoints_with_scores[0][0][:, :2])
-    # print(type(keypoints_with_scores))
-
+    print(keypoints_with_scores[0][0][:, :2])
+    print(type(keypoints_with_scores))
+    # Draw the landmarks onto the image with threshold
+    # draw_key_points(image, keypoints_with_scores, conf_threshold=0.4)
+    # draw_connections(image, keypoints_with_scores, EDGES, 0.4)
 
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
@@ -294,6 +297,8 @@ def callback(frame):
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
 
+
+
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
     index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
@@ -329,54 +334,62 @@ def callback(frame):
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
     return av.VideoFrame.from_ndarray(image, format="bgr24")
 
-
-# ==================== Actual UI output =====================
-
 best_downdog = Image.open('mika_poses/best_downdog.jpeg')
+best_goddess = Image.open('mika_poses/best_goddess.jpeg')
 best_highplank = Image.open('mika_poses/best_highplank.jpeg')
 best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-best_goddess = Image.open('mika_poses/best_goddess.jpeg')
 best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
-# Show perfect poses
+#The 15-seconds countdown functions
+# def main():
+#     if st.button("Start Timer"):
+#         start_timer()
 
-pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
+# def start_timer():
+#     ph = st.empty()
+#     N = 15
+#     while True:
+#         for secs in range(N, 0, -1):
+#             mm, ss = secs // 60, secs % 60
+#             ph.metric("Timer", f"{mm:02d}:{ss:02d}")
+#             time.sleep(1)
+#         ph.empty()  # Clear the timer display
 
-with pose_col_1:
-    with st.container():
-        st.image(best_downdog, use_column_width=True)
+# Define the layout for the video feed and pose images
+video_col, pose_col = st.columns([3, 1])  # Adjust the column width ratios as needed
 
-with pose_col_2:
-    with st.container():
-        st.image(best_highplank, use_column_width=True)
-
-with pose_col_3:
-    with st.container():
-        st.image(best_hightree, use_column_width=True)
-
-with pose_col_4:
-    with st.container():
-        st.image(best_goddess, use_column_width=True)
-
-with pose_col_5:
-    with st.container():
-        st.image(best_warrior, use_column_width=True)
-
-
-webrtc_streamer(
-    key="example",
-    video_frame_callback=callback,
-    rtc_configuration={  # Add this line
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    },
-    media_stream_constraints={"video": True, "audio": False}  # Disable audio
-)
-# main()
-
+with video_col:
+    webrtc_streamer(
+        key="example",
+        video_frame_callback=callback,
+        rtc_configuration={  # Add this line
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        }
+    )
+    # main()
 
 labels_placeholder = st.empty()
 angle_perc = st.empty()
 timecount =  st.empty()
+
+with pose_col:
+    # Use a container and set the overflow property to allow scrolling
+    with st.container():
+        st.image(best_downdog, use_column_width=True)
+        st.image(best_goddess, use_column_width=True)
+        st.image(best_highplank, use_column_width=True)
+        st.image(best_hightree, use_column_width=True)
+        st.image(best_warrior, use_column_width=True)
+
+    # Custom CSS to make the container scrollable
+    st.markdown("""
+        <style>
+        .stContainer {
+            overflow-y: auto;
+            max-height: 720px;  /* Adjust the max-height to match the video feed */
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
@@ -389,3 +402,5 @@ while True:
     labels_placeholder.write(f"results: {result}")
     angle_perc.write(f"FIX YOUR {worst}")
     timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+# (currently not) Scrollable pose images
