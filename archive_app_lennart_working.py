@@ -297,32 +297,6 @@ def callback(frame):
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
 
-    # score_angles_history.append(score_angles)
-    # average_score_history.append(average_score)
-
-    # # print (angle_diff_history)
-    # # print (avg_percentage_diff_history)
-    # # Calculate the sliding window averages
-    # sliding_score_angles_history = np.mean(score_angles_history, axis=0)
-    # sliding_average_score_history = np.mean(average_score_history)
-
-
-    # sliding_avg_diff = np.mean(score_angles_history, axis=0)
-
-    # # Draw the bars onto the frame
-    # draw_bars(image, sliding_score_angles_history)
-
-
-    # cv2.putText(image, f"Score: {round(sliding_average_score_history,2)}", (210, 80), font, font_scale, font_color, line_type)
-
-    # cv2.putText(image, f"Elbow L", (0, 120), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Elbow R", (0, 150), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Shoulder L", (0, 180), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Shoulder R", (0, 210), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Hip L", (0, 240), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Hip R", (0, 270), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Knee L", (0, 300), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Knee R", (0, 330), font, font_scale, font_color, line_type)
 
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
@@ -356,14 +330,6 @@ def callback(frame):
 
     return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
-    # cv2.putText(image, f"Elbow L: {round(1-sliding_avg_diff[0],1)}", (0, 120), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Elbow R: {round(1-sliding_avg_diff[1],1)}", (0, 150), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Shoulder L: {round(1-sliding_avg_diff[2],1)}", (0, 180), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Shoulder R: {round(1-sliding_avg_diff[3],1)}", (0, 210), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Hip L: {round(1-sliding_avg_diff[4],1)}", (0, 240), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Hip R: {round(1-sliding_avg_diff[5],1)}", (0, 270), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Knee L: {round(1-sliding_avg_diff[6],1)}", (0, 300), font, font_scale, font_color, line_type)
-    # cv2.putText(image, f"Knee R: {round(1-sliding_avg_diff[7],1)}", (0, 330), font, font_scale, font_color, line_type)
 
     print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
     return av.VideoFrame.from_ndarray(image, format="bgr24")
