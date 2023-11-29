@@ -228,18 +228,37 @@ def update_state(result):
     st.session_state['result'] = result
     st.experimental_rerun()  # Use Streamlit's experimental rerun feature
 
-st.markdown("### Pose Analysis (Placeholder)")
-col1, col2 = st.columns(2)
-col1.metric("Pose Name", "Warrior")
-col2.metric("Score", "80%")
+# Show perfect poses
 
-# Define the layout for the video feed and pose images
-video_col, pose_col = st.columns([3, 1])  # Adjust the column width ratios as needed
+pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-# # USING SESSION STATE + IF
+with pose_col_1:
+    with st.container():
+        st.image(best_downdog, use_column_width=True)
+
+with pose_col_2:
+    with st.container():
+        st.image(best_goddess, use_column_width=True)
+
+with pose_col_3:
+    with st.container():
+        st.image(best_highplank, use_column_width=True)
+
+with pose_col_4:
+    with st.container():
+        st.image(best_hightree, use_column_width=True)
+
+with pose_col_5:
+    with st.container():
+        st.image(best_warrior, use_column_width=True)
+
+# # Define the layout for the video feed and scoring
+# video_col, score_col = st.columns([3, 1])  # Adjust the column width ratios as needed
+
+# # USING WHILE LOOP
 # with video_col:
 #     # The live video feed remains unchanged
-#     webrtc_ctx = webrtc_streamer(
+#     webrtc_streamer(
 #         key="example",
 #         video_frame_callback=callback,
 #         rtc_configuration={
@@ -247,59 +266,23 @@ video_col, pose_col = st.columns([3, 1])  # Adjust the column width ratios as ne
 #         }
 #     )
 
-#     # Check if the WebRTC connection is up and there's a new result to display
-#     if webrtc_ctx.video_processor:
-#         if not result_queue.empty():
-#             result = result_queue.get()
-#             update_state(result)
-#             # Update the session state with the new result
-#             st.session_state['result'] = result
-
-#     # Display the result below the video feed
-#     st.markdown("### Pose Analysis")
-#     # Use the session_state to display the result
-#     if 'result' in st.session_state and st.session_state['result'] is not None:
-#         st.write(st.session_state['result'])
-#     else:
-#         st.write("No pose analysis results to display yet.")
-
-# USING WHILE LOOP
-with video_col:
-    # The live video feed remains unchanged
-    webrtc_streamer(
+webrtc_streamer(
         key="example",
         video_frame_callback=callback,
         rtc_configuration={
             "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
         }
     )
-    # labels_placeholder = st.empty()
-    # timecount =  st.empty()
-    # while True:
-    #     s_time = time.time()
-    #     result = result_queue.get()
-    #     labels_placeholder.write(result)
-    #     timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
 
-# Scrollable pose images
-with pose_col:
-    # Use a container and set the overflow property to allow scrolling
-    with st.container():
-        st.image(best_downdog, use_column_width=True)
-        st.image(best_goddess, use_column_width=True)
-        st.image(best_highplank, use_column_width=True)
-        st.image(best_hightree, use_column_width=True)
-        st.image(best_warrior, use_column_width=True)
+st.markdown("### Pose Analysis (Placeholder)")
+st.metric("Pose Name", "Warrior")
+st.metric("Score", "80%")
+labels_placeholder = st.empty()
 
-# #To make the while loop work without blocking the rest of the page to execute, by placing it at the end of the page but still not working
-# st.markdown("### Pose Analysis")
-# labels_placeholder = st.empty()
-# timecount =  st.empty()
-# while True:
-#     s_time = time.time()
-#     result = result_queue.get()
-#     labels_placeholder.write(result)
-#     timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+while True:
+    # result = result_queue.get()
+    # labels_placeholder.write(result)
+    pass
 
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
