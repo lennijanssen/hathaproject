@@ -186,6 +186,7 @@ webrtc_streamer(
 labels_placeholder = st.empty()
 angle_perc = st.empty()
 timecount =  st.empty()
+
 while True:
     s_time = time.time()
     worst = result_queue.get()
