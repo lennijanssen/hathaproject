@@ -17,8 +17,8 @@ import queue
 # ======================== Setup and Model Loading =========================
 
 # Make page wide (remove default wasted whitespace)
-print('setting the page config')
-st.set_page_config(layout="wide")
+# print('setting the page config')
+# st.set_page_config(layout="wide")
 
 #Remove the menu button and Streamlit icon on the footer
 hide_default_format = """
@@ -340,34 +340,34 @@ def callback(frame):
 
 # Use placeholders for loading images
 
-best_downdog = Image.open('mika_poses/best_downdog.jpeg')
-best_highplank = Image.open('mika_poses/best_highplank.jpeg')
-best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-best_goddess = Image.open('mika_poses/best_goddess.jpeg')
-best_warrior = Image.open('mika_poses/best_warrior.jpeg')
+# best_downdog = Image.open('mika_poses/best_downdog.jpeg')
+# best_highplank = Image.open('mika_poses/best_highplank.jpeg')
+# best_hightree = Image.open('mika_poses/best_hightree.jpeg')
+# best_goddess = Image.open('mika_poses/best_goddess.jpeg')
+# best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
-# Show the poses with the loading spinner
-pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
+# # Show the poses with the loading spinner
+# pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-with pose_col_1:
-    with st.container():
-        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
+# with pose_col_1:
+#     with st.container():
+#         st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
 
-with pose_col_2:
-    with st.container():
-        st.image(best_highplank, use_column_width=True, caption='High Plank')
+# with pose_col_2:
+#     with st.container():
+#         st.image(best_highplank, use_column_width=True, caption='High Plank')
 
-with pose_col_3:
-    with st.container():
-        st.image(best_hightree, use_column_width=True, caption='High Tree')
+# with pose_col_3:
+#     with st.container():
+#         st.image(best_hightree, use_column_width=True, caption='High Tree')
 
-with pose_col_4:
-    with st.container():
-        st.image(best_goddess, use_column_width=True, caption='Goddess')
+# with pose_col_4:
+#     with st.container():
+#         st.image(best_goddess, use_column_width=True, caption='Goddess')
 
-with pose_col_5:
-    with st.container():
-        st.image(best_warrior, use_column_width=True, caption='Warrior')
+# with pose_col_5:
+#     with st.container():
+#         st.image(best_warrior, use_column_width=True, caption='Warrior')
 
 
 webrtc_streamer(
@@ -394,17 +394,17 @@ column3 = col3.empty()
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
 
 
-while True:
-    s_time = time.time()
-    # print(result_queue.get())
-    # print(max(result_queue.get()))
-    worst = joint_dict[result_queue.get()]
-    result = max(result_queue.get())
-    # labels_placeholder.write(f"results: {result}")
-    # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
-    # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+# while True:
+#     s_time = time.time()
+#     # print(result_queue.get())
+#     # print(max(result_queue.get()))
+#     worst = joint_dict[result_queue.get()]
+#     result = max(result_queue.get())
+#     # labels_placeholder.write(f"results: {result}")
+#     # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+#     # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
 
 
-    # column1.write(f"Score: {sliding_avg_score}")
-    column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
-    column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+#     # column1.write(f"Score: {sliding_avg_score}")
+#     column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+#     column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
