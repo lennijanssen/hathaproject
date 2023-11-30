@@ -16,9 +16,9 @@ import queue
 
 # ======================== Setup and Model Loading =========================
 
-# # Make page wide (remove default wasted whitespace)
-# print('setting the page config')
-# st.set_page_config(layout="wide")
+# Make page wide (remove default wasted whitespace)
+print('setting the page config')
+st.set_page_config(layout="wide")
 
 #Remove the menu button and Streamlit icon on the footer
 hide_default_format = """
@@ -42,10 +42,36 @@ streamlit_style = """
             """
 st.markdown(streamlit_style, unsafe_allow_html=True)
 
-# Centralize the title 'Hatha Project'
-st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha Project 🧘‍♀️</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
-st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
+# Container for Header & sub-header
+header_container = st.container()
+with header_container:
+    # Code for Header & sub-header
+    st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha Project 🧘‍♀️</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
+    st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
+
+# Container for 'How it works' section
+how_it_works_container = st.container()
+with how_it_works_container:
+    # Code for 'How it works' section
+    col1, col2, col3 = st.columns([1, 1, 1])
+    st.markdown("""
+        <style>
+        .big-font {
+            font-size:30px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    with col1:
+        st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
+        st.markdown("User holds a yoga pose in front of the camera")
+    with col2:
+        st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
+        st.markdown("Hatha Support recognizes the pose")
+    with col3:
+        st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
+        st.markdown("User receives instant feedback on the pose")
+
 
 # Load Model and Scaler
 interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
@@ -318,48 +344,46 @@ def callback(frame):
 
 # ==================== Actual UI output =====================
 
-# Use placeholders for loading images
+# Container for Images
+images_container = st.container()
+with images_container:
+    # Code for Images
+    best_downdog = Image.open('mika_poses/best_downdog.jpeg')
+    best_highplank = Image.open('mika_poses/best_highplank.jpeg')
+    best_hightree = Image.open('mika_poses/best_hightree.jpeg')
+    best_goddess = Image.open('mika_poses/best_goddess.jpeg')
+    best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
-best_downdog = Image.open('mika_poses/best_downdog.jpeg')
-best_highplank = Image.open('mika_poses/best_highplank.jpeg')
-best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-best_goddess = Image.open('mika_poses/best_goddess.jpeg')
-best_warrior = Image.open('mika_poses/best_warrior.jpeg')
+    # Show the poses with the loading spinner
+    pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-# Show the poses with the loading spinner
-pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
-
-with pose_col_1:
-    with st.container():
-        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
-
-with pose_col_2:
-    with st.container():
-        st.image(best_highplank, use_column_width=True, caption='High Plank')
-
-with pose_col_3:
-    with st.container():
+    with pose_col_1:
         st.image(best_hightree, use_column_width=True, caption='High Tree')
 
-with pose_col_4:
-    with st.container():
+    with pose_col_2:
         st.image(best_goddess, use_column_width=True, caption='Goddess')
 
-with pose_col_5:
-    with st.container():
+    with pose_col_3:
+        st.image(best_highplank, use_column_width=True, caption='High Plank')
+
+    with pose_col_4:
+        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
+
+    with pose_col_5:
         st.image(best_warrior, use_column_width=True, caption='Warrior')
 
-
-webrtc_streamer(
-    key="example",
-    video_frame_callback=callback,
-    rtc_configuration={  # Add this line
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    },
-    media_stream_constraints={"video": True, "audio": False}  # Disable audio
-)
-# main()
-
+# Container for live video feed & pose analysis
+video_analysis_container = st.container()
+with video_analysis_container:
+    # Code for live video feed & pose analysis
+    webrtc_streamer(
+        key="example",
+        video_frame_callback=callback,
+        rtc_configuration={  # Add this line
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        },
+        media_stream_constraints={"video": True, "audio": False}  # Disable audio
+    )
 
 labels_placeholder = st.empty()
 angle_perc = st.empty()
