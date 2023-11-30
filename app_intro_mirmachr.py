@@ -1,12 +1,12 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, RTCConfiguration, WebRtcMode
-from project_logic.angle_comparer import angle_comparer
-import tensorflow as tf
-import numpy as np
-import tensorflow_hub as hub
-from project_logic.best_poses import *
+# from streamlit_webrtc import webrtc_streamer, RTCConfiguration, WebRtcMode
+# from project_logic.angle_comparer import angle_comparer
+# import tensorflow as tf
+# import numpy as np
+# import tensorflow_hub as hub
+# from project_logic.best_poses import *
 from PIL import Image
-import base64
+# import base64
 
 
 # Container for the entire application
