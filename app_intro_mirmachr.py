@@ -75,7 +75,7 @@ with app_container:
     st.markdown(
         """
         <div style="text-align: center;">
-            <a href="/app_main.py" target="_blank" style="text-decoration: none;">
+            <a href="https://hathaproject-practice.streamlit.app/" target="_blank" style="text-decoration: none;">
                 <button style="font-size: 20px; padding: 10px 20px; border-radius: 10px; background-color: black; color: white;">Get Started 🧘‍♂️</button>
             </a>
         </div>
