@@ -16,9 +16,9 @@ import queue
 
 # ======================== Setup and Model Loading =========================
 
-# Make page wide (remove default wasted whitespace)
-print('setting the page config')
-st.set_page_config(layout="wide")
+# # Make page wide (remove default wasted whitespace)
+# print('setting the page config')
+# st.set_page_config(layout="wide")
 
 #Remove the menu button and Streamlit icon on the footer
 hide_default_format = """
@@ -47,26 +47,6 @@ st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha P
 st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
 st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
 
-# Define the layout for the 'How it works' section
-col1, col2, col3 = st.columns([1,1,1])
-st.markdown("""
-<style>
-.big-font {
-    font-size:30px !important;
-}
-</style>
-""", unsafe_allow_html=True)
-with col1:
-    st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
-    st.markdown("User holds a yoga pose in front of the camera")
-with col2:
-    st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
-    st.markdown("Hatha Support recognizes the pose")
-with col3:
-    st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
-    st.markdown("User receives instant feedback on the pose")
-
-
 # Load Model and Scaler
 interpreter = tf.lite.Interpreter(model_path="models/3.tflite")
 interpreter.allocate_tensors()
@@ -74,6 +54,7 @@ model = tf.keras.models.load_model('notebooks/24112023_sub_model.h5')
 scaler = joblib.load('notebooks/scaler.pkl')
 
 # Define necessary dictionaries
+
 label_mapping = {
     0: 'Downdog',
     1: 'Goddess',
@@ -97,8 +78,8 @@ EDGES = {
     (0, 2): 'c',
     (1, 3): 'm',
     (2, 4): 'c',
-    # (0, 5): 'm',
-    # (0, 6): 'c',
+    (0, 5): 'm',
+    (0, 6): 'c',
     (5, 7): 'm',
     (7, 9): 'm',
     (6, 8): 'c',
@@ -219,16 +200,17 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2, m
 
 
 # Initialize global variables for the sliding window
-window_size = 2  # Number of frames to average over
+window_size = 30  # Number of frames to average over
 score_angles_history = deque(maxlen=window_size)
-average_score_history = deque(maxlen=window_size)
 angle_diff_history = deque(maxlen=window_size)
 avg_percentage_diff_history = deque(maxlen=window_size)
+worst_name_history = deque(maxlen=window_size)
+average_score_history = deque(maxlen=window_size)
 
 
 # Defining the callback to create video and overlay
 def callback(frame):
-    global angle_diff_history, avg_percentage_diff_history, score_angles_history, average_score_history
+    global worst_name_history, angle_diff_history, avg_percentage_diff_history, score_angles_history, average_score_history
 
     s_time = time.time()
     """ ======== 1. Movenet to get Landmarks ======== """
@@ -288,16 +270,18 @@ def callback(frame):
     cv2.rectangle(image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
     cv2.putText(image, text, text_position, font, font_scale, font_color, line_type)
 
-    """ ======== 3. Scoring of Pose ========"""
+    """ ======== 3. Scoring of Pose ====+===="""
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
+    average_score = sum(test_angle_percentage_diff)/len(test_angle_percentage_diff)
     index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
     worst_points = lm_points[index_of_worst]
     result_queue.put(lm_list[index_of_worst])
+
 
     # cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
@@ -313,7 +297,10 @@ def callback(frame):
     }
 
     result_queue.put(worst_edges)
+    # average_score_history.append(1-average_score)
+    worst_name_history.append(lm_list[index_of_worst])
 
+    # sliding_avg_score = np.mean(average_score_history, axis=0)
 
     # Draw the landmarks onto the image with threshold
     draw_key_points(image, worst_kps, conf_threshold=0.2)
@@ -330,6 +317,8 @@ def callback(frame):
 
 
 # ==================== Actual UI output =====================
+
+# Use placeholders for loading images
 
 best_downdog = Image.open('mika_poses/best_downdog.jpeg')
 best_highplank = Image.open('mika_poses/best_highplank.jpeg')
@@ -360,6 +349,7 @@ with pose_col_5:
     with st.container():
         st.image(best_warrior, use_column_width=True, caption='Warrior')
 
+
 webrtc_streamer(
     key="example",
     video_frame_callback=callback,
@@ -370,49 +360,31 @@ webrtc_streamer(
 )
 # main()
 
+
 labels_placeholder = st.empty()
 angle_perc = st.empty()
 timecount =  st.empty()
 
-# Sample variables to be shown, to be replaced with real-time data
-sample_pose = "Warrior"
-sample_score = "86%"
-sample_body_part = "Left elbow"
-
-# Add the loading spinner around the section where results are updated
-with st.spinner('Analyzing pose...'):
-    col1, col2, col3, col4 = st.columns(4)
-    col1.markdown("""### Pose Analysis""")
-    col2.metric("Pose", sample_pose)
-    col3.metric("Score", sample_score)
-    col4.metric("You need to fix", sample_body_part)
-
-# Learn More Section
-with st.expander("""More about the yoga poses and the benefits 🧘"""):
-    st.write("""
-        - **Downward-Facing Dog**:
-        A quintessential yoga pose, Downward-Facing Dog provides a rejuvenating stretch for the entire body. It's known for its ability to calm the mind, lengthen the spine, strengthen the upper body, and stimulate blood flow to the brain. This pose is often used as a resting posture in between more challenging poses.
-
-        - **Plank**:
-        Foundational pose that strengthens the arms, wrists, and spine while toning the abdomen. It's a full-body workout that requires energy, engagement, and stability, and it's an essential component for building core strength and resilience.
-
-        - **Tree**:
-        Strengthens the legs, opens the hips, and cultivates concentration and clarity of mind. By mimicking the steady stance of a tree, practitioners learn to root themselves firmly to the ground, promoting a sense of grounding and balance.
-
-        - **Goddess**:
-        Dynamic standing posture that ignites the fires of the inner thighs, hips, and chest. As a pose that encourages powerful energy flow, it's excellent for improving circulation and energizing the body. It also fosters a sense of inner strength and empowerment.
-
-        - **Warrior**:
-        Helps build focus, power, and stability. This powerful stretch for your thighs and shoulders increases stamina as well.
-    """)
+col1, col2, col3 = st.columns(3)
+column1 = col1.empty()
+column2 = col2.empty()
+column3 = col3.empty()
 
 # Add the footer with copyright information
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
 
+
 while True:
     s_time = time.time()
-    worst = result_queue.get()
+    # print(result_queue.get())
+    # print(max(result_queue.get()))
+    worst = joint_dict[result_queue.get()]
     result = max(result_queue.get())
-    labels_placeholder.write(f"results: {result}")
-    angle_perc.write(f"FIX YOUR {worst}")
-    timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    # labels_placeholder.write(f"results: {result}")
+    # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+
+    # column1.write(f"Score: {sliding_avg_score}")
+    column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
