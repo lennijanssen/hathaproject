@@ -350,34 +350,43 @@ def callback(frame):
 
 # ==================== Actual UI output =====================
 
+@st.cache_data
+def load_and_cache_image(image_path):
+    return Image.open(image_path)
+
+best_all_poses = load_and_cache_image('mika_poses/all_poses.jpeg')
+
+# best_hightree = load_and_cache_image('mika_poses/best_hightree.jpeg')
+# best_goddess = load_and_cache_image('mika_poses/best_goddess.jpeg')
+# best_highplank = load_and_cache_image('mika_poses/best_highplank.jpeg')
+# best_downdog = load_and_cache_image('mika_poses/best_downdog.jpeg')
+# best_warrior = load_and_cache_image('mika_poses/best_warrior.jpeg')
 
 # Container for Images
 images_container = st.container()
 with images_container:
-    # Code for Images
-    best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-    best_goddess = Image.open('mika_poses/best_goddess.jpeg')
-    best_highplank = Image.open('mika_poses/best_highplank.jpeg')
-    best_downdog = Image.open('mika_poses/best_downdog.jpeg')
-    best_warrior = Image.open('mika_poses/best_warrior.jpeg')
+    st.image(best_all_poses, use_column_width=True)
 
-    # Show the poses with the loading spinner
-    pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-    with pose_col_1:
-        st.image(best_hightree, use_column_width=True, caption='High Tree')
+    # # Code for Images
 
-    with pose_col_2:
-        st.image(best_goddess, use_column_width=True, caption='Goddess')
+    # # Show the poses with the loading spinner
+    # pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-    with pose_col_3:
-        st.image(best_highplank, use_column_width=True, caption='High Plank')
+    # with pose_col_1:
+    #     st.image(best_hightree, use_column_width=True, caption='High Tree')
 
-    with pose_col_4:
-        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
+    # with pose_col_2:
+    #     st.image(best_goddess, use_column_width=True, caption='Goddess')
 
-    with pose_col_5:
-        st.image(best_warrior, use_column_width=True, caption='Warrior')
+    # with pose_col_3:
+    #     st.image(best_highplank, use_column_width=True, caption='High Plank')
+
+    # with pose_col_4:
+    #     st.image(best_downdog, use_column_width=True, caption='Downward Dog')
+
+    # with pose_col_5:
+    #     st.image(best_warrior, use_column_width=True, caption='Warrior')
 
 
 video_analysis_container = st.container()
