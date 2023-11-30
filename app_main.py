@@ -148,6 +148,14 @@ result_queue: "queue.Queue[List[Detection]]" = queue.Queue()
 # ==================== Functions definition and Variables =====================
 
 # Defining functions for the
+def get_score_eval(score: float):
+    if score <= 0.6:
+        return "bad"
+    elif score <= 0.85:
+        return "good"
+    else:
+        return "perfect!"
+
 def draw_key_points(frame, keypoints, conf_threshold):
     max_dim = max(frame.shape)
     shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
@@ -155,7 +163,7 @@ def draw_key_points(frame, keypoints, conf_threshold):
     for kp in shaped:
         ky, kx, kp_conf = kp
         if kp_conf > conf_threshold:
-            cv2.circle(frame,(int(kx), int(ky)-80), 1, (0, 255, 0), 5)
+            cv2.circle(frame,(int(kx), int(ky)-80), 1, (90,195,217), 15)
     return frame
 
 def draw_connections(frame, keypoints, edges, confidence_threshold):
@@ -168,7 +176,7 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
         y2, x2, c2 = shaped[p2]
 
         if (c1 > confidence_threshold) & (c2 > confidence_threshold):
-            cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (255,0,0), 2)
+            cv2.line(frame, (int(x1), int(y1)-80), (int(x2), int(y2)-80), (88, 235, 52), 3)
 
 def get_pose(landmarks: list):
     """
@@ -227,14 +235,14 @@ def draw_bars(frame, angle_diffs, max_value=1.0, bar_height=28, bar_spacing=2, m
 
 
 # Initialize global variables for the sliding window
-window_size = 30  # Number of frames to average over
+window_size = 15  # Number of frames to average over
 score_angles_history = deque(maxlen=window_size)
 angle_diff_history = deque(maxlen=window_size)
 avg_percentage_diff_history = deque(maxlen=window_size)
 worst_name_history = deque(maxlen=window_size)
 average_score_history = deque(maxlen=window_size)
 pose_history = deque(maxlen=window_size)
-
+score_eval_dict = {}
 
 # Defining the callback to create video and overlay
 def callback(frame):
@@ -259,13 +267,11 @@ def callback(frame):
     # print(keypoints_with_scores[0][0][:, :2])
     # print(type(keypoints_with_scores))
 
-
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
     target_pose = label_mapping[np.argmax(pose_output)]
-    if np.max(pose_output) < 0.8:
+    if (keypoints_with_scores[0][0][:, 2]).min() < 0.1 or np.argmax(pose_output) < 0.98:
         target_pose = "...still thinking..."
-
 
     result_queue.put(target_pose)
     pose_history.append(target_pose)
@@ -334,12 +340,17 @@ def callback(frame):
     print(worst_name_history)
     # sliding_avg_score = np.mean(average_score_history, axis=0)
 
-    # Draw the landmarks onto the image with threshold
-    draw_key_points(image, worst_kps, conf_threshold=0.2)
-    draw_connections(image, keypoints_with_scores, worst_edges, 0.5)
+    if np.max(pose_output) > 0.5 and np.max(pose_output) < 0.95:
+        # Draw the landmarks onto the image with threshold
+        draw_key_points(image, worst_kps, conf_threshold=0.2)
+        draw_connections(image, keypoints_with_scores, worst_edges, 0.2)
+
     mirrored_image = cv2.flip(image, 1)
     # cv2.rectangle(mirrored_image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
     # cv2.putText(mirrored_image, text, text_position, font, font_scale, font_color, line_type)
+
+    if average_score > 0.85:
+        draw_frame(frame)
 
     return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
@@ -388,7 +399,6 @@ with images_container:
     # with pose_col_5:
     #     st.image(best_warrior, use_column_width=True, caption='Warrior')
 
-
 video_analysis_container = st.container()
 with video_analysis_container:
     # Code for live video feed & pose analysis
@@ -431,5 +441,5 @@ while True:
     # column1.write(f"Score: {sliding_avg_score}")
     column1.subheader(f"Your pose: {max(set(pose_history))}")
     column2.subheader(f"Fix your: {joint_dict[max(set(worst_name_history), key=worst_name_history.count)]}")
-    column3.subheader(f"Your score: {round(average_score,2)}")
+    column3.subheader(f"Your score: {get_score_eval(average_score)}")
     # column3.title(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
