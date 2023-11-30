@@ -332,8 +332,8 @@ def callback(frame):
     return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
 
-    print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
-    return av.VideoFrame.from_ndarray(image, format="bgr24")
+    # print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    # return av.VideoFrame.from_ndarray(image, format="bgr24")
 
 
 # ==================== Actual UI output =====================
@@ -394,17 +394,17 @@ column3 = col3.empty()
 st.markdown("<div style='text-align: center; color: grey;'>Copyright © The Hatha Team 2023</div>", unsafe_allow_html=True)
 
 
-# while True:
-#     s_time = time.time()
-#     # print(result_queue.get())
-#     # print(max(result_queue.get()))
-#     worst = joint_dict[result_queue.get()]
-#     result = max(result_queue.get())
-#     # labels_placeholder.write(f"results: {result}")
-#     # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
-#     # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+while True:
+    s_time = time.time()
+    # print(result_queue.get())
+    # print(max(result_queue.get()))
+    worst = joint_dict[result_queue.get()]
+    result = max(result_queue.get())
+    # labels_placeholder.write(f"results: {result}")
+    # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
 
 
-#     # column1.write(f"Score: {sliding_avg_score}")
-#     column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
-#     column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    # column1.write(f"Score: {sliding_avg_score}")
+    column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
+    column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
