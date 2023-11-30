@@ -447,7 +447,7 @@ while True:
     fix_your = joint_dict[max(set(worst_name_history), key=worst_name_history.count)]
     your_score = get_score_eval(average_score)
     # column1.write(f"Score: {sliding_avg_score}")
-    column1.subheader(f"Your pose: {max(set(pose_history))}")
+    # column1.subheader(f"Your pose: {max(set(pose_history))}")
     # column2.subheader(f"Fix your: {joint_dict[max(set(worst_name_history), key=worst_name_history.count)]}")
     # column3.subheader(f"Your score: {get_score_eval(average_score)}")
     # column3.title(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
@@ -463,10 +463,10 @@ while True:
         result = "perfect!"
         result_color = "green"
 
-    column1.markdown(f"<p style='font-size:50px; font-weight:bold; color:black;'>Pose Analysis {your_pose}</p>", unsafe_allow_html=True)
+    column1.markdown(f"<p style='font-size:50px; color:black;'>Pose</p>\n<p style='font-size:35px; font-weight:bold; color:black;'>{your_pose}</p>", unsafe_allow_html=True)
 
     # Show label and result in black
-    # column2.markdown(f"<p style='font-size:18px; color:black;'>Score</p>\n<p style='font-size:45px; font-weight:bold; color:{result_color};'>{result}</p>", unsafe_allow_html=True)
+    column2.markdown(f"<p style='font-size:50px; color:black;'>Score</p>\n<p style='font-size:35px; font-weight:bold; color:{result_color};'>{result}</p>", unsafe_allow_html=True)
 
     # # Show label and result in black
-    # column3.markdown(f"<p style='font-size:18px; color:black;'>Fix your</p>\n<p style='font-size:45px; font-weight:bold; color:red;'>{worst}</p>", unsafe_allow_html=True)
+    column3.markdown(f"<p style='font-size:50px; color:black;'>Fix your</p>\n<p style='font-size:35px; font-weight:bold; color:red;'>{fix_your}</p>", unsafe_allow_html=True)
