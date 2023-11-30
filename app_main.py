@@ -46,32 +46,32 @@ header_container = st.container()
 with header_container:
 
     # Centralize the title 'Hatha Project'
-    st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha Project 🧘‍♀️</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
-    st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: black;'>🧘‍♀️ Practice Session 🧘‍♀️</h1>", unsafe_allow_html=True)
+    # st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
+    # st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
 
     # Define the layout for the 'How it works' section
 
-# Container for 'How it works' section
-how_it_works_container = st.container()
-with how_it_works_container:
-    col1, col2, col3 = st.columns([1,1,1])
-    st.markdown("""
-    <style>
-    .big-font {
-        font-size:30px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    with col1:
-        st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
-        st.markdown("User holds a yoga pose in front of the camera")
-    with col2:
-        st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
-        st.markdown("Hatha Support recognizes the pose")
-    with col3:
-        st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
-        st.markdown("User receives instant feedback on the pose")
+# # Container for 'How it works' section
+# how_it_works_container = st.container()
+# with how_it_works_container:
+#     col1, col2, col3 = st.columns([1,1,1])
+#     st.markdown("""
+#     <style>
+#     .big-font {
+#         font-size:30px !important;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
+#     with col1:
+#         st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
+#         st.markdown("User holds a yoga pose in front of the camera")
+#     with col2:
+#         st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
+#         st.markdown("Hatha Support recognizes the pose")
+#     with col3:
+#         st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
+#         st.markdown("User receives instant feedback on the pose")
 
 
 # Load Model and Scaler
