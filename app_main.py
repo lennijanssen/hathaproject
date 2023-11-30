@@ -156,6 +156,14 @@ def get_score_eval(score: float):
     else:
         return "perfect!"
 
+def get_score_eval(score: float):
+    if score <= 0.6:
+        return "bad"
+    elif score <= 0.85:
+        return "good"
+    else:
+        return "perfect!"
+
 def draw_key_points(frame, keypoints, conf_threshold):
     max_dim = max(frame.shape)
     shaped = np.squeeze(np.multiply(keypoints, [max_dim,max_dim,1]))
@@ -242,7 +250,6 @@ avg_percentage_diff_history = deque(maxlen=window_size)
 worst_name_history = deque(maxlen=window_size)
 average_score_history = deque(maxlen=window_size)
 pose_history = deque(maxlen=window_size)
-score_eval_dict = {}
 
 # Defining the callback to create video and overlay
 def callback(frame):
@@ -349,8 +356,6 @@ def callback(frame):
     # cv2.rectangle(mirrored_image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
     # cv2.putText(mirrored_image, text, text_position, font, font_scale, font_color, line_type)
 
-    if average_score > 0.85:
-        draw_frame(frame)
 
     return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
@@ -438,8 +443,30 @@ while True:
     total_score = sum(average_score_history)  # Sum up the values in the deque
     average_score = total_score / window_size
 
+    your_pose = max(set(pose_history))
+    fix_your = joint_dict[max(set(worst_name_history), key=worst_name_history.count)]
+    your_score = get_score_eval(average_score)
     # column1.write(f"Score: {sliding_avg_score}")
     column1.subheader(f"Your pose: {max(set(pose_history))}")
-    column2.subheader(f"Fix your: {joint_dict[max(set(worst_name_history), key=worst_name_history.count)]}")
-    column3.subheader(f"Your score: {get_score_eval(average_score)}")
+    # column2.subheader(f"Fix your: {joint_dict[max(set(worst_name_history), key=worst_name_history.count)]}")
+    # column3.subheader(f"Your score: {get_score_eval(average_score)}")
     # column3.title(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+
+    # If statements for the text colours
+    if average_score <= 0.6:
+        result = "bad"
+        result_color = "red"
+    elif average_score <= 0.85:
+        result = "good"
+        result_color = "orange"
+    else:
+        result = "perfect!"
+        result_color = "green"
+
+    column1.markdown(f"<p style='font-size:50px; font-weight:bold; color:black;'>Pose Analysis {your_pose}</p>", unsafe_allow_html=True)
+
+    # Show label and result in black
+    # column2.markdown(f"<p style='font-size:18px; color:black;'>Score</p>\n<p style='font-size:45px; font-weight:bold; color:{result_color};'>{result}</p>", unsafe_allow_html=True)
+
+    # # Show label and result in black
+    # column3.markdown(f"<p style='font-size:18px; color:black;'>Fix your</p>\n<p style='font-size:45px; font-weight:bold; color:red;'>{worst}</p>", unsafe_allow_html=True)
