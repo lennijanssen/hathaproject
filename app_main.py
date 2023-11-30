@@ -42,29 +42,36 @@ streamlit_style = """
             """
 st.markdown(streamlit_style, unsafe_allow_html=True)
 
-# Centralize the title 'Hatha Project'
-st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha Project 🧘‍♀️</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
-st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
+header_container = st.container()
+with header_container:
 
-# Define the layout for the 'How it works' section
-col1, col2, col3 = st.columns([1,1,1])
-st.markdown("""
-<style>
-.big-font {
-    font-size:30px !important;
-}
-</style>
-""", unsafe_allow_html=True)
-with col1:
-    st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
-    st.markdown("User holds a yoga pose in front of the camera")
-with col2:
-    st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
-    st.markdown("Hatha Support recognizes the pose")
-with col3:
-    st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
-    st.markdown("User receives instant feedback on the pose")
+    # Centralize the title 'Hatha Project'
+    st.markdown("<h1 style='text-align: center; color: black;'>🧘‍♀️ Hatha Project 🧘‍♀️</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: black;'>Supporting affordable yoga practice at home</h3>", unsafe_allow_html=True)
+    st.markdown("Some blurb about the project, we're awesome we're cool etc etc Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", unsafe_allow_html=True)
+
+    # Define the layout for the 'How it works' section
+
+# Container for 'How it works' section
+how_it_works_container = st.container()
+with how_it_works_container:
+    col1, col2, col3 = st.columns([1,1,1])
+    st.markdown("""
+    <style>
+    .big-font {
+        font-size:30px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    with col1:
+        st.write("<p class = big-font>Step 1:</p>", unsafe_allow_html=True)
+        st.markdown("User holds a yoga pose in front of the camera")
+    with col2:
+        st.write("<p class = big-font>Step 2:</p>", unsafe_allow_html=True)
+        st.markdown("Hatha Support recognizes the pose")
+    with col3:
+        st.write("<p class = big-font>Step 3:</p>", unsafe_allow_html=True)
+        st.markdown("User receives instant feedback on the pose")
 
 
 # Load Model and Scaler
@@ -129,7 +136,7 @@ joint_dict = {'landmarks_left_elbow': 'left elbow',
               'landmarks_left_shoulder': 'left shoulder',
               'landmarks_right_shoulder': 'right shoulder',
               'landmarks_hip_left': 'left hip',
-              'landmarks_hip_right': 'hip right',
+              'landmarks_hip_right': 'left hip',
               'landmarks_left_knee': 'left knee',
               'landmarks_right_knee': 'right knee'
               }
@@ -226,6 +233,7 @@ angle_diff_history = deque(maxlen=window_size)
 avg_percentage_diff_history = deque(maxlen=window_size)
 worst_name_history = deque(maxlen=window_size)
 average_score_history = deque(maxlen=window_size)
+pose_history = deque(maxlen=window_size)
 
 
 # Defining the callback to create video and overlay
@@ -259,36 +267,40 @@ def callback(frame):
         target_pose = "...still thinking..."
 
 
+    result_queue.put(target_pose)
+    pose_history.append(target_pose)
+    print(pose_history)
+
     """ ======== 2.1. Text and Rectangle for Pose prediction ======== """
     # Coordinates where the text will appear
-    text_position = (180, 34)
+    # text_position = (180, 34)
 
-    # Font settings
-    font = cv2.FONT_HERSHEY_COMPLEX
-    font_scale = 1
-    font_color = (0, 0, 0)  # White color
-    line_type = 2
+    # # Font settings
+    # font = cv2.FONT_HERSHEY_COMPLEX
+    # font_scale = 1
+    # font_color = (0, 0, 0)  # White color
+    # line_type = 2
 
-    # which text??
-    text = target_pose
-    text_bottom_left = text_position
+    # # which text??
+    # text = target_pose
+    # text_bottom_left = text_position
 
-    # Set the fixed-size rectangle dimensions
-    box_width = 300
-    box_height = 50
+    # # Set the fixed-size rectangle dimensions
+    # box_width = 300
+    # box_height = 50
 
-    # Set the top-left corner of the rectangle
-    rectangle_top_left = (170, -4)  # You can change this to position the box anywhere on the image
+    # # Set the top-left corner of the rectangle
+    # rectangle_top_left = (170, -4)  # You can change this to position the box anywhere on the image
 
     # Calculate the bottom-right corner of the rectangle based on the fixed size
-    rectangle_bottom_right = (rectangle_top_left[0] + box_width, rectangle_top_left[1] + box_height)
+    # rectangle_bottom_right = (rectangle_top_left[0] + box_width, rectangle_top_left[1] + box_height)
 
     # Draw the fixed-size rectangle on the image
-    rectangle_color = (0, 255, 0)  # Green color for the rectangle
-    rectangle_thickness = -1  # Thickness of the rectangle borders
+    # rectangle_color = (0, 255, 0)  # Green color for the rectangle
+    # rectangle_thickness = -1  # Thickness of the rectangle borders
 
-    cv2.rectangle(image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
-    cv2.putText(image, text, text_position, font, font_scale, font_color, line_type)
+    # cv2.rectangle(image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
+    # cv2.putText(image, text, text_position, font, font_scale, font_color, line_type)
 
     """ ======== 3. Scoring of Pose ====+===="""
 
@@ -297,11 +309,11 @@ def callback(frame):
 
     best = np.array(best_pose_map[np.argmax(pose_output)])
     test_angle_percentage_diff, average_percentage_diff, score_angles, score_angles_unscaled, average_score = angle_comparer(keypoints_with_scores[0][0][:, :2], best)
-    average_score = sum(test_angle_percentage_diff)/len(test_angle_percentage_diff)
+    average_score = 1-sum(test_angle_percentage_diff)/len(test_angle_percentage_diff)
     index_of_worst = test_angle_percentage_diff.index(max(test_angle_percentage_diff))
     worst_points = lm_points[index_of_worst]
     result_queue.put(lm_list[index_of_worst])
-
+    average_score_history.append(average_score)
 
     # cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
@@ -319,15 +331,15 @@ def callback(frame):
     result_queue.put(worst_edges)
     # average_score_history.append(1-average_score)
     worst_name_history.append(lm_list[index_of_worst])
-
+    print(worst_name_history)
     # sliding_avg_score = np.mean(average_score_history, axis=0)
 
     # Draw the landmarks onto the image with threshold
     draw_key_points(image, worst_kps, conf_threshold=0.2)
     draw_connections(image, keypoints_with_scores, worst_edges, 0.5)
     mirrored_image = cv2.flip(image, 1)
-    cv2.rectangle(mirrored_image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
-    cv2.putText(mirrored_image, text, text_position, font, font_scale, font_color, line_type)
+    # cv2.rectangle(mirrored_image, rectangle_top_left, rectangle_bottom_right, rectangle_color, rectangle_thickness)
+    # cv2.putText(mirrored_image, text, text_position, font, font_scale, font_color, line_type)
 
     return av.VideoFrame.from_ndarray(mirrored_image, format="bgr24")
 
@@ -338,48 +350,47 @@ def callback(frame):
 
 # ==================== Actual UI output =====================
 
-# Use placeholders for loading images
 
-# best_downdog = Image.open('mika_poses/best_downdog.jpeg')
-# best_highplank = Image.open('mika_poses/best_highplank.jpeg')
-# best_hightree = Image.open('mika_poses/best_hightree.jpeg')
-# best_goddess = Image.open('mika_poses/best_goddess.jpeg')
-# best_warrior = Image.open('mika_poses/best_warrior.jpeg')
+# Container for Images
+images_container = st.container()
+with images_container:
+    # Code for Images
+    best_hightree = Image.open('mika_poses/best_hightree.jpeg')
+    best_goddess = Image.open('mika_poses/best_goddess.jpeg')
+    best_highplank = Image.open('mika_poses/best_highplank.jpeg')
+    best_downdog = Image.open('mika_poses/best_downdog.jpeg')
+    best_warrior = Image.open('mika_poses/best_warrior.jpeg')
 
-# # Show the poses with the loading spinner
-# pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
+    # Show the poses with the loading spinner
+    pose_col_1, pose_col_2, pose_col_3, pose_col_4, pose_col_5 = st.columns([1, 1, 1, 1, 1])
 
-# with pose_col_1:
-#     with st.container():
-#         st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
+    with pose_col_1:
+        st.image(best_hightree, use_column_width=True, caption='High Tree')
 
-# with pose_col_2:
-#     with st.container():
-#         st.image(best_highplank, use_column_width=True, caption='High Plank')
+    with pose_col_2:
+        st.image(best_goddess, use_column_width=True, caption='Goddess')
 
-# with pose_col_3:
-#     with st.container():
-#         st.image(best_hightree, use_column_width=True, caption='High Tree')
+    with pose_col_3:
+        st.image(best_highplank, use_column_width=True, caption='High Plank')
 
-# with pose_col_4:
-#     with st.container():
-#         st.image(best_goddess, use_column_width=True, caption='Goddess')
+    with pose_col_4:
+        st.image(best_downdog, use_column_width=True, caption='Downward Facing Dog')
 
-# with pose_col_5:
-#     with st.container():
-#         st.image(best_warrior, use_column_width=True, caption='Warrior')
+    with pose_col_5:
+        st.image(best_warrior, use_column_width=True, caption='Warrior')
 
 
-webrtc_streamer(
-    key="example",
-    video_frame_callback=callback,
-    rtc_configuration={  # Add this line
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    },
-    media_stream_constraints={"video": True, "audio": False}  # Disable audio
-)
-# main()
-
+video_analysis_container = st.container()
+with video_analysis_container:
+    # Code for live video feed & pose analysis
+    webrtc_streamer(
+        key="example",
+        video_frame_callback=callback,
+        rtc_configuration={  # Add this line
+            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        },
+        media_stream_constraints={"video": True, "audio": False}  # Disable audio
+    )
 
 labels_placeholder = st.empty()
 angle_perc = st.empty()
@@ -398,13 +409,18 @@ while True:
     s_time = time.time()
     # print(result_queue.get())
     # print(max(result_queue.get()))
-    worst = joint_dict[result_queue.get()]
+    # worst = joint_dict[result_queue.get()]
     result = max(result_queue.get())
+    result2 = max(result_queue.get())
+    result3 = max(result_queue.get())
     # labels_placeholder.write(f"results: {result}")
     # angle_perc.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
     # timecount.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
-
+    total_score = sum(average_score_history)  # Sum up the values in the deque
+    average_score = total_score / window_size
 
     # column1.write(f"Score: {sliding_avg_score}")
-    column2.write(f"FIX YOUR {max(set(worst_name_history), key=worst_name_history.count)}")
-    column3.write(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    column1.subheader(f"Your pose: {max(set(pose_history))}")
+    column2.subheader(f"Fix your: {joint_dict[max(set(worst_name_history), key=worst_name_history.count)]}")
+    column3.subheader(f"Your score: {round(average_score,2)}")
+    # column3.title(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
