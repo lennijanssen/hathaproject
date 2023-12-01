@@ -277,7 +277,7 @@ def callback(frame):
     """ ======== 2. Pose Prediction ======== """
     pose_output = get_pose(keypoints_with_scores[0][0])
     target_pose = label_mapping[np.argmax(pose_output)]
-    if (keypoints_with_scores[0][0][:, 2]).min() < 0.1 or np.argmax(pose_output) < 0.98:
+    if (keypoints_with_scores[0][0][:, 2]).min() < 0.1 or np.max(pose_output) < 0.90:
         target_pose = "...still thinking..."
 
     result_queue.put(target_pose)
