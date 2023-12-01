@@ -282,7 +282,7 @@ def callback(frame):
 
     result_queue.put(target_pose)
     pose_history.append(target_pose)
-    print(pose_history)
+    # print(pose_history)
 
     """ ======== 2.1. Text and Rectangle for Pose prediction ======== """
     # Coordinates where the text will appear
@@ -330,7 +330,7 @@ def callback(frame):
 
     # cv2.putText(image, f"Score (avg): {test_angle_percentage_diff}", (50, 100), font, font_scale, font_color, line_type)
 
-    print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
+    # print(f"Runtime is {round((time.time() - s_time)*1000, 2)}")
 
     worst_kps = []
     for i in lm_points[index_of_worst]:
@@ -344,7 +344,7 @@ def callback(frame):
     result_queue.put(worst_edges)
     # average_score_history.append(1-average_score)
     worst_name_history.append(lm_list[index_of_worst])
-    print(worst_name_history)
+    # print(worst_name_history)
     # sliding_avg_score = np.mean(average_score_history, axis=0)
 
     if np.max(pose_output) > 0.5 and np.max(pose_output) < 0.95:
