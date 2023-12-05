@@ -370,7 +370,7 @@ def callback(frame):
 def load_and_cache_image(image_path):
     return Image.open(image_path)
 
-best_all_poses = load_and_cache_image('mika_poses/all_poses.jpeg')
+best_all_poses = load_and_cache_image('best_poses/mika_poses/all_poses.jpeg')
 
 # best_hightree = load_and_cache_image('mika_poses/best_hightree.jpeg')
 # best_goddess = load_and_cache_image('mika_poses/best_goddess.jpeg')
