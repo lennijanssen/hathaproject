@@ -5,7 +5,7 @@ Hatha Support is a Yoga pose correction tool that recognizes the Yoga pose you d
 App home (if not over resource limit): https://hathaproject-trainer.streamlit.app/
    
 ## Built With
-- [Tensorflow Movenet]([https://www.tensorflow.org/](https://www.tensorflow.org/hub/tutorials/movenet)) - Human pose estimation
+- [Tensorflow Movenet](https://www.tensorflow.org/hub/tutorials/movenet) - Human pose estimation
 - [Keras](https://keras.io/) - Neural Network (via Tensorflow)
 - [Joblib](https://joblib.readthedocs.io/) - Lightweight pipeline structure for calculations
 - [WebRTC](https://webrtc.org/) - Online-livestream
