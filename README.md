@@ -8,7 +8,7 @@ App home (if not over resource limit): https://hathaproject-trainer.streamlit.ap
 - [Tensorflow Movenet](https://www.tensorflow.org/hub/tutorials/movenet) - Human pose estimation
 - [Keras](https://keras.io/) - Neural Network (via Tensorflow)
 - [Joblib](https://joblib.readthedocs.io/) - Lightweight pipeline structure for calculations
-- [WebRTC](https://webrtc.org/) - Online-livestream
+- [WebRTC](https://webrtc.org/) - Online livestream
 - [OpenCV](https://opencv.org/) - Overlay of livestream
 - [Streamlit](https://streamlit.io/) - Deployment
 
