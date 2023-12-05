@@ -2,7 +2,7 @@
 
 Hatha Support is a Yoga pose correction tool that recognizes the Yoga pose you do from a live feed, evaluates performance and suggests a body part to correct. It is trained on 5 poses, of which 3 work very well and the other two depend on environmental factors (like the background). The project was created as the final project for the LeWagon Data Science Bootcamp in two weeks by a group of three people. Example screenshots of deployment in Streamlit Cloud can be found in the corresponding folder of the repository. The programming language used was python. all packages used can be found in the requirement.txt file.
 
-App home (if online): https://hathaproject-trainer.streamlit.app/
+App home (if not over resource limit): https://hathaproject-trainer.streamlit.app/
    
 ## Built With
 - [Tensorflow Movenet]([https://www.tensorflow.org/](https://www.tensorflow.org/hub/tutorials/movenet)) - Human pose estimation
