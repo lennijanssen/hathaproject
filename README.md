@@ -38,7 +38,7 @@ The project was inspired by weekly Yoga practice with our Yoga teacher Mika Sait
 
 ## Team Members
 - Lennart Janssen  (www.linkedin.com/in/lennijanssen) (https://github.com/lennijanssen)
-- Masaki Norton    (www.linkedin.com/in/masaki-norton)
+- Masaki Norton    (www.linkedin.com/in/masaki-norton) (https://github.com/masaki-norton)
 - Maria Miranda    (https://github.com/mirmachr)
 
 ## Contributing
