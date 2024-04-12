@@ -21,7 +21,7 @@ Yoga Pose Detector is a Yoga pose correction tool that recognizes the Yoga pose 
     streamlit run app_main.py
     ```
 
-Online app home (if not over resource limit): https://hathaproject-trainer.streamlit.app/
+Online app home (currently unstable): https://hathaproject-trainer.streamlit.app/
    
 ## Built With
 - [Tensorflow Movenet](https://www.tensorflow.org/hub/tutorials/movenet) - Human pose estimation
